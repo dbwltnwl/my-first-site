@@ -38,7 +38,7 @@ export function Hero() {
   const defaultInfo = {
     greeting: "단국대학교 포르투갈브라질학과",
     name: "유지수",
-    title: "세계 도시의 흐름을 읽고 미래의 공간에 관심이 있습니다.",
+    title: "세계 도시의 흐름을 읽고 미래의 공간을 계획합니다.",
     description: " ",
     profileImage: "/uploads/hero-profile-1761477237286.png",
     backgroundImage: "",
