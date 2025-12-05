@@ -1,6 +1,5 @@
 "use client"
 
-import { useRouter } from "next/navigation";
 import * as React from "react"
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
@@ -31,7 +30,6 @@ const AVAILABLE_ICONS = {
 }
 
 export function Hero() {
-   const router = useRouter();
   const { getData, saveData, isEditMode, saveToFile, saveFieldToFile } = useInlineEditor()
   
   // 초기 데이터 - 배열 형태로 변경
@@ -113,10 +111,11 @@ const scrollToAbout = () => {
   };
   
   const scrollToProjects = () => {
-  router.push("/projects");
+  const projectsSection = document.querySelector("#projects");
+  if (projectsSection) {
+    projectsSection.scrollIntoView({ behavior: "smooth" });
+  }
 };
-
- 
 
   // 소셜 아이콘 렌더링 함수
   const renderSocialIcon = (link: { name: string; icon: string; url: string }, index: number) => {
