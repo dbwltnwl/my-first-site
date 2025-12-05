@@ -36,10 +36,10 @@ export function Hero() {
   const defaultSocialLinks = [{"name":"Instagram","icon":"instagram","url":"https://instagram.com/username"},{"name":"YouTube","icon":"youtube","url":"https://youtube.com/@username"}]
   
   const defaultInfo = {
-    greeting: "안녕하세요,",
+    greeting: "단국대학교 포르투갈브라질학과",
     name: "유지수",
-    title: "단국대 학생입니다",
-    description: "프롭테크와 부동산 시장에 관심이 있습니다.",
+    title: "세계 도시의 흐름을 읽고 미래의 공간에 관심이 있습니다.",
+    description: "",
     profileImage: "/uploads/hero-profile-1761477237286.png",
     backgroundImage: "",
     backgroundVideo: "",
