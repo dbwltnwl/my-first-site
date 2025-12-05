@@ -116,8 +116,7 @@ const scrollToAbout = () => {
   router.push("/projects");
 };
 
- const renderSocialIcon = (link: { name: string; icon: string; url: string }, index: number) => {
-
+ 
 
   // 소셜 아이콘 렌더링 함수
   const renderSocialIcon = (link: { name: string; icon: string; url: string }, index: number) => {
