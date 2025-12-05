@@ -14,7 +14,7 @@ export function Projects() {
   // 기본 데이터
   const defaultInfo = {
     title: "프로젝트",
-    subtitle: "프로젝트",
+    subtitle: " ",
     initialDisplay: 6,
     loadMoreCount: 3,
     background: {
@@ -238,10 +238,9 @@ export function Projects() {
         />
 
         <div className="text-center space-y-3">
-          <h3 className="text-xl font-semibold">프롭테크 데이터 분석 프로젝트</h3>
+          <h3 className="text-xl font-semibold">도시계획의 사각지대 분석</h3>
           <p className="text-muted-foreground">
-            서울 아파트 실거래가와 전세가 데이터를 수집·시각화해서
-            부동산 시장의 흐름과 투자 포인트를 분석한 프로젝트입니다.
+            브라질 파벨라에서 실거래,임대가격이 형성되는 방식
           </p>
         </div>
       </div></p>
