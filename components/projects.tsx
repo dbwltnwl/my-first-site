@@ -9,7 +9,7 @@ type ProjectItem = {
 const PROJECTS: ProjectItem[] = [
   {
     title: "브라질 파벨라 구역",
-    image: "/uploads/프롭테크 프로젝트 첨부_1.png",
+    image: "/uploads/project_3",
   },
   {
     title: "분당 정자동 아파트 지구 노후계획도시",
@@ -19,6 +19,10 @@ const PROJECTS: ProjectItem[] = [
     title: "프랑스 사회주택의 HLM정책",
     image: "/uploads/project1.png",
   },
+ {
+    title: "포르투갈 골든비자 정책이 부동산 가격에 미친 영향",
+    image: "/uploads/project_4",
+  },
 ];
 
 export function Projects() {
@@ -26,7 +30,7 @@ export function Projects() {
     <section className="max-w-6xl mx-auto px-4 py-16">
       <header className="mb-10 text-center">
         <h1 className="text-3xl font-bold tracking-tight mb-2">프로젝트</h1>
-        <p className="text-gray-500">저의 프로젝트와 작업물을 정리했습니다.</p>
+        <p className="text-gray-500"> </p>
       </header>
 
       {/* 그리드 */}      
