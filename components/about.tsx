@@ -100,11 +100,11 @@ export function About() {
     subtitle: "당신의 전문성과 열정을 소개해주세요.",
     background: {"image":"","video":"","color":"","opacity":0.1},
     experienceCards: [{"icon":"briefcase","title":"단국대학교","period":"2023.03 ~","description":" "},{"icon":"graduation","title":"포르투갈 교환학생","period":"2024.02~07","description":"University og Coimbra"},{"icon":"award","title":"투자자산운용사 ","period":"2025 43회","description":" "},{"icon":"award","title":"FLEX(Foreign Language EXamination)","period":" 2023-2 ","description":" "}],
-    skills: [{"icon":"globe","title":"국제적 관점의 도시·부동산 연구","description":"다양한 국가의 도시 구조·주거 문제 비교 분석"},{"icon":"search","title":"부동산 및 도시 정책 이해","description":"주거·재생·개발·인프라 등 부동산 구조와 도시 문제 연구"},{"icon":" ","title":" ","description":" "}],
+    skills: [{"icon":"globe","title":"국제적 관점의 도시·부동산 연구","description":"다양한 국가의 도시 구조·주거 문제 비교 분석"},{"icon":"search","title":"부동산 및 도시 정책 이해","description":"주거·재생·개발·인프라 등 부동산 구조와 도시 문제 연구"},{"icon":"lightbulb","title":"지역 전문성","description":"브라질 BCC기사 현지 정책,도시문제,시장자료 해석 능력"}],
     storyTitle: "나의 이야기",
     story: ["저는 포르투갈·브라질학과에서 언어와 문화, 그리고 사람의 생활방식을 먼저 배웠습니다.","하지만 도시와 부동산의 구조를 이해하려 할 때, 제 전공만으로는 설명하기 어려운 지점들이 자연스럽게 보이기 시작했습니다.","도시와 공간을 이해하는 또 하나의 언어를 배우기 위해 저는 부동산학이라는 영역에 발을 들였습니다. 처음에는 낯선 용어와 개념들에 부딪히며 시행착오도 많았지만, 그 과정에서 중요한 변화를 경험했습니다.","물론 저는 여전히 부족한 점이 많습니다. 도시를 완벽하게 설명할 수 있는 것도 아니고, 부동산 시장의 모든 원리를 이해한 것도 아닙니다. 그러나 저는 이런 부족함 때문에 멈추지 않습니다. 오히려 더 깊이 관찰하고, 더 많이 질문하며, 도시를 구성하는 여러 층위를 천천히 읽어나갈 수 있게 되었습니다."],
     storyImage: "",
-    hobbies: [" ","☕ 카페 투어","🎨 전시회 관람","✈️ 여행"]
+    hobbies: [,"☕ 카페 투어","🎨 전시회 관람","✈️ 여행"]
   }
   
   const [aboutInfo, setAboutInfo] = useState(defaultInfo)
