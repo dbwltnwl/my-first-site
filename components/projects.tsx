@@ -9,7 +9,7 @@ type ProjectItem = {
 const PROJECTS: ProjectItem[] = [
   {
     title: "브라질 파벨라 구역",
-    image: "/uploads/project_3",
+    image: "/uploads/project_3.png",
   },
   {
     title: "분당 정자동 아파트 지구 노후계획도시",
@@ -21,7 +21,7 @@ const PROJECTS: ProjectItem[] = [
   },
  {
     title: "포르투갈 골든비자 정책이 부동산 가격에 미친 영향",
-    image: "/uploads/project_4",
+    image: "/uploads/project_4.png",
   },
 ];
 
