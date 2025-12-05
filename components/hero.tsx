@@ -105,16 +105,18 @@ export function Hero() {
     saveData('hero-social-links', newLinks)
   }
 
+const scrollToAbout = () => {
+    const aboutSection = document.querySelector("#about");
+    if (aboutSection) {
+      aboutSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+  
   const scrollToProjects = () => {
   router.push("/projects");
 };
 
-  const scrollToProjects = () => {
-    const projectsSection = document.querySelector("#projects")
-    if (projectsSection) {
-      projectsSection.scrollIntoView({ behavior: "smooth" })
-    }
-  }
+ const renderSocialIcon = (link: { name: string; icon: string; url: string }, index: number) => {
 
 
   // 소셜 아이콘 렌더링 함수
