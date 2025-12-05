@@ -33,7 +33,7 @@ export function Hero() {
   const { getData, saveData, isEditMode, saveToFile, saveFieldToFile } = useInlineEditor()
   
   // 초기 데이터 - 배열 형태로 변경
-  const defaultSocialLinks = [{"name":"Instagram","icon":"instagram","url":"https://instagram.com/username"},{"name":"YouTube","icon":"youtube","url":"https://youtube.com/@username"}]
+  const defaultSocialLinks = [{icon: "github", url: "https://github.com/dbwltnwl"}]
   
   const defaultInfo = {
     greeting: "단국대학교 포르투갈브라질학과",
