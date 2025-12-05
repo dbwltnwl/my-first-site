@@ -17,7 +17,7 @@ const PROJECTS: ProjectItem[] = [
   },
   {
     title: "프랑스 사회주택의 HLM정책",
-    image: "/uploads/project1.png",
+    image: "/uploads/project_1.png",
   },
  {
     title: "포르투갈 골든비자 정책이 부동산 가격에 미친 영향",
