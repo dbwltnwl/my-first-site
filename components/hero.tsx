@@ -110,11 +110,8 @@ const scrollToAbout = () => {
     }
   };
   
-  const scrollToProjects = () => {
-  const projectsSection = document.querySelector("#projects");
-  if (projectsSection) {
-    projectsSection.scrollIntoView({ behavior: "smooth" });
-  }
+   const scrollToProjects = () => {
+  router.push("/#projects");
 };
 
   // 소셜 아이콘 렌더링 함수
