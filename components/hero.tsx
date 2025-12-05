@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation";
 import * as React from "react"
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
@@ -30,6 +31,7 @@ const AVAILABLE_ICONS = {
 }
 
 export function Hero() {
+   const router = useRouter();
   const { getData, saveData, isEditMode, saveToFile, saveFieldToFile } = useInlineEditor()
   
   // 초기 데이터 - 배열 형태로 변경
@@ -103,12 +105,9 @@ export function Hero() {
     saveData('hero-social-links', newLinks)
   }
 
-  const scrollToAbout = () => {
-    const aboutSection = document.querySelector("#about")
-    if (aboutSection) {
-      aboutSection.scrollIntoView({ behavior: "smooth" })
-    }
-  }
+  const scrollToProjects = () => {
+  router.push("/projects");
+};
 
   const scrollToProjects = () => {
     const projectsSection = document.querySelector("#projects")
