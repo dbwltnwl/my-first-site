@@ -100,7 +100,7 @@ export function About() {
     subtitle: "당신의 전문성과 열정을 소개해주세요.",
     background: {"image":"","video":"","color":"","opacity":0.1},
     experienceCards: [{"icon":"briefcase","title":"단국대학교","period":"2023.03 ~","description":" "},{"icon":"graduation","title":"포르투갈 교환학생","period":"2024.02~07","description":"University og Coimbra"},{"icon":"award","title":"투자자산운용사 ","period":"2025 43회","description":" "},{"icon":"award","title":"FLEX(Foreign Language EXamination)","period":" B ","description":" "}],
-    skills: [{"icon":"code","title":"프론트엔드 개발","description":"React, TypeScript, Next.js를 활용한 모던 웹 개발"},{"icon":"database","title":"백엔드 개발","description":"Node.js, Python, 데이터베이스 설계 및 구현"},{"icon":"palette","title":"UI/UX 디자인","description":"사용자 중심의 인터페이스 디자인"}],
+    skills: [{"icon":"code","title":"국제적 관점의 도시·부동산 연구","description":"다양한 국가의 도시 구조·주거 문제 비교 분석"},{"icon":"database","title":"부동산 및 도시 정책 이해","description":"주거·재생·개발·인프라 등 부동산 구조와 도시 문제 연구"},{"icon":"palette","title":"UI/UX 디자인","description":"사용자 중심의 인터페이스 디자인"}],
     storyTitle: "나의 이야기",
     story: ["저는 기술을 통해 사람들의 삶을 더 편리하고 의미 있게 만드는 일에 열정을 가지고 있습니다.","다양한 프로젝트를 통해 문제 해결 능력과 창의적인 사고를 키워왔으며, 팀원들과의 협업을 통해 함께 성장하는 가치를 배웠습니다.","앞으로도 지속적인 학습과 도전을 통해 더 나은 개발자가 되기 위해 노력하겠습니다."],
     storyImage: "",
