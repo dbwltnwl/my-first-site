@@ -230,7 +230,21 @@ export function Projects() {
           {validProjects.length === 0 && !isEditMode ? (
             <div className="text-center py-20">
               <span className="text-6xl block mb-4">🚀</span>
-              <p className="text-xl text-muted-foreground">준비 중입니다</p>
+              <p className="text-xl text-muted-foreground"> <div className="mt-10 flex flex-col items-center gap-6">
+        <img
+          src="/uploads/프롭테크 프로젝트 첨부_1.png"
+          alt="프롭테크 프로젝트 화면"
+          className="w-full max-w-xl rounded-2xl shadow-lg"
+        />
+
+        <div className="text-center space-y-3">
+          <h3 className="text-xl font-semibold">프롭테크 데이터 분석 프로젝트</h3>
+          <p className="text-muted-foreground">
+            서울 아파트 실거래가와 전세가 데이터를 수집·시각화해서
+            부동산 시장의 흐름과 투자 포인트를 분석한 프로젝트입니다.
+          </p>
+        </div>
+      </div></p>
             </div>
           ) : (
             /* 프로젝트 그리드 */
