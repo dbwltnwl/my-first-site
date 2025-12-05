@@ -8,19 +8,16 @@ type ProjectItem = {
 
 const PROJECTS: ProjectItem[] = [
   {
-    title: "1",
-    description: "브라질 파벨라 구역",
+    title: "브라질 파벨라 구역",
     image: "/uploads/프롭테크 프로젝트 첨부_1.png",
   },
   {
-    title: "2",
-    description: "포르투갈 골든",
-    image: "/uploads/프롭테크 프로젝트 첨부_2.png",
+    title: "분당 정자동 아파트 지구 노후계획도시",
+    image: "/uploads/project_2.png",
   },
   {
     title: "프랑스 사회주택의 HLM정책",
-    description: "프랑스의 대표적인 HLM 정책에 대해 분석 ",
-    image: " ",
+    image: "/uploads/project1.png",
   },
 ];
 
