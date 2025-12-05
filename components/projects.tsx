@@ -19,7 +19,7 @@ const PROJECTS: TimelineItem[] = [
   },
 ];
 
-export default function ProjectsTimeline() {
+export function Projects() {
   return (
     <section className="max-w-4xl mx-auto px-4 py-16">
       <header className="mb-10 text-center">
@@ -32,6 +32,7 @@ export default function ProjectsTimeline() {
       <ol className="relative border-l border-gray-200">
         {PROJECTS.map((item, index) => (
           <li key={index} className="mb-10 ml-6">
+            {/* 동그란 타임라인 점 */}
             <span className="absolute -left-3 flex h-6 w-6 items-center justify-center rounded-full bg-white ring-8 ring-white">
               <span className="flex h-3 w-3 items-center justify-center rounded-full bg-gray-900" />
             </span>
