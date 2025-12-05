@@ -99,7 +99,7 @@ export function About() {
     title: "소개",
     subtitle: "당신의 전문성과 열정을 소개해주세요.",
     background: {"image":"","video":"","color":"","opacity":0.1},
-    experienceCards: [{"icon":"briefcase","title":"단국대학교","period":"2023.03 ~","description":" "},{"icon":"graduation","title":"포르투갈 교환학생","period":"2024.02~07","description":"University og Coimbra"},{"icon":"award","title":"투자자산운용사 ","period":"2025 43회","description":" "},{"icon":"award","title":"FLEX(Foreign Language EXamination)","period":" B ","description":" "}],
+    experienceCards: [{"icon":"briefcase","title":"단국대학교","period":"2023.03 ~","description":" "},{"icon":"graduation","title":"포르투갈 교환학생","period":"2024.02~07","description":"University og Coimbra"},{"icon":"award","title":"투자자산운용사 ","period":"2025 43회","description":" "},{"icon":"award","title":"FLEX(Foreign Language EXamination)","period":" 2023.11.04 ","description":" "}],
     skills: [{"icon":"globe","title":"국제적 관점의 도시·부동산 연구","description":"다양한 국가의 도시 구조·주거 문제 비교 분석"},{"icon":"search","title":"부동산 및 도시 정책 이해","description":"주거·재생·개발·인프라 등 부동산 구조와 도시 문제 연구"},{"icon":"palette","title":"UI/UX 디자인","description":"사용자 중심의 인터페이스 디자인"}],
     storyTitle: "나의 이야기",
     story: ["저는 포르투갈·브라질학과에서 언어와 문화, 그리고 사람의 생활방식을 먼저 배웠습니다.
