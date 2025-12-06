@@ -292,26 +292,37 @@ export function Contact() {
             </div>
             
             {/* 프로필 카드 */}
-            <Card className="p-8 border-0 shadow-xl bg-gradient-to-br from-card to-muted/20">
-              <div className="flex items-start gap-6">
-                {/* 프로필 이미지 자리 */}
-                <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <span className="text-3xl">{contactInfo.profileEmoji || '👤'}</span>
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-2xl font-bold text-foreground mb-1">
-                    {contactInfo.name}
-                  </h3>
-                  <p className="text-lg text-primary mb-2">
-                    {contactInfo.title}
-                  </p>
-                  <p className="text-muted-foreground">
-                    {contactInfo.experience}
-                    {contactInfo.responseTime && ` | ${contactInfo.responseTime}`}
-                  </p>
-                </div>
-              </div>
-            </Card>
+<Card className="p-8 border-0 shadow-xl bg-gradient-to-br from-card to-muted/20">
+  <div className="flex items-start gap-6">
+    {/* 프로필 이미지 자리 */}
+    <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+      <span className="text-3xl">{contactInfo.profileEmoji || "👤"}</span>
+    </div>
+    <div className="flex-1">
+      {/* 이름 */}
+      <h3 className="text-2xl font-bold text-foreground mb-1">
+        {isPT ? "Yu Jisu" : contactInfo.name}
+      </h3>
+
+      {/* 학과/직함 */}
+      <p className="text-lg text-primary mb-2">
+        {isPT
+          ? "Estudante do Departamento de Português e Estudos Brasileiros da Universidade Dankook"
+          : contactInfo.title}
+      </p>
+
+      {/* 학년 + 응답 시간 */}
+      <p className="text-muted-foreground">
+        {isPT ? "3º ano" : contactInfo.experience}
+        {" "}
+        {isPT
+          ? "| Respondo em até 24 horas"
+          : (contactInfo.responseTime && `| ${contactInfo.responseTime}`)}
+      </p>
+    </div>
+  </div>
+</Card>
+
 
             {/* 주요 연락 수단 그리드 */}
             <div className="grid grid-cols-2 gap-4">
@@ -360,39 +371,43 @@ export function Contact() {
               </a>
 
               {/* 위치 카드 */}
-              <Card className="p-5 border-0 shadow-lg">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                    <MapPin className="h-5 w-5 text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs text-muted-foreground">
-                      {isPT ? CONTACT_PT_TEXT.locationLabel : "위치"}
-                    </p>
-                    <p className="text-sm font-medium text-foreground truncate">
-                        {contactInfo.location}
-                    </p>
-                  </div>
-                </div>
-              </Card>
+<Card className="p-5 border-0 shadow-lg">
+  <div className="flex items-center gap-3">
+    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+      <MapPin className="h-5 w-5 text-primary" />
+    </div>
+    <div className="flex-1 min-w-0">
+      <p className="text-xs text-muted-foreground">
+        {isPT ? "Localização" : "위치"}
+      </p>
+      <p className="text-sm font-medium text-foreground truncate">
+        {isPT
+          ? "Seongnam, Província de Gyeonggi, Coreia do Sul"
+          : contactInfo.location}
+      </p>
+    </div>
+  </div>
+</Card>
+
 
               {/* 업무시간 카드 */}
-              <Card className="p-5 border-0 shadow-lg">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Clock className="h-5 w-5 text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs text-muted-foreground">
-                      {isPT ? CONTACT_PT_TEXT.workTimeLabel : "업무시간"}
-                    </p>
-                    <p className="text-sm font-medium text-foreground truncate">
-                        {contactInfo.workTime}
-                    </p>
-                  </div>
-                </div>
-              </Card>
-            </div>
+<Card className="p-5 border-0 shadow-lg">
+  <div className="flex items-center gap-3">
+    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+      <Clock className="h-5 w-5 text-primary" />
+    </div>
+    <div className="flex-1 min-w-0">
+      <p className="text-xs text-muted-foreground">
+        {isPT ? "Horário" : "업무시간"}
+      </p>
+      <p className="text-sm font-medium text-foreground truncate">
+        {isPT
+          ? "Seg–Sex 09:00–18:00 (horário da Coreia)"
+          : contactInfo.workTime}
+      </p>
+    </div>
+  </div>
+</Card>
 
             {/* 소셜 미디어 섹션 헤더 */}
             <div className="flex items-center justify-between mb-4 mt-8">
