@@ -25,12 +25,38 @@ const AVAILABLE_ICONS = {
   mail: Mail
 }
 
+// 언어 타입 및 포르투갈어 텍스트
+type ContactLang = "ko" | "pt"
+
+const CONTACT_PT_TEXT = {
+  sectionTitle: "Contato",
+  sectionSubtitle:
+    "Estou aberta a propostas de projetos e colaborações. Entre em contato pelo canal que preferir!",
+  profileHeader: "Informações do perfil",
+  phoneLabel: "Telefone",
+  emailLabel: "E-mail",
+  locationLabel: "Localização",
+  workTimeLabel: "Horário",
+  socialHeader: "Redes sociais",
+  qrTitle: "Salvar contato via QR code",
+  qrSubtitleSelected: "Ao escanear, as informações selecionadas serão salvas como contato.",
+  qrSubtitleEmpty: "Selecione quais informações deseja incluir no QR code.",
+  qrNoteMain: "📱 Ao escanear, o contato é salvo automaticamente.",
+  qrIncludedLabel: "Informações incluídas: ",
+  bottomMessage: "Vamos crescer juntos como parceiras(o) de projeto.",
+  bottomSubMessage: "Farei o meu melhor para o sucesso dos seus projetos.",
+} as const
+
 export function Contact() {
   const { getData, saveData, isEditMode, saveToFile } = useInlineEditor()
   const [showProfileModal, setShowProfileModal] = useState(false)
   const [showSocialModal, setShowSocialModal] = useState(false)
   const [showQRModal, setShowQRModal] = useState(false)
   const [showIconPicker, setShowIconPicker] = useState<number | null>(null)
+
+  // 표시 언어 상태
+  const [lang, setLang] = useState<ContactLang>("ko")
+  const isPT = !isEditMode && lang === "pt"
   
   // 기본 데이터
   const defaultInfo = {
@@ -71,7 +97,7 @@ export function Contact() {
       setContactInfo({ ...defaultInfo, ...savedData })
       // background 데이터가 있으면 설정
       if (savedData.background) {
-        setBackgroundData(savedData.background)
+        setBackgroundData(savedData.background as any)
       }
     }
     
@@ -99,7 +125,6 @@ export function Contact() {
     newLinks.push({ name: '새 링크', icon: 'globe', url: '' })
     setSocialLinks(newLinks)
     saveData('contact-social-links', newLinks)
-    // 소셜 링크는 별도 저장 로직 필요 - 현재는 localStorage만 사용
   }
   
   const updateSocialLink = (index: number, field: 'name' | 'icon' | 'url', value: string) => {
@@ -107,14 +132,12 @@ export function Contact() {
     newLinks[index] = { ...newLinks[index], [field]: value }
     setSocialLinks(newLinks)
     saveData('contact-social-links', newLinks)
-    // 소셜 링크는 별도 저장 로직 필요 - 현재는 localStorage만 사용
   }
   
   const removeSocialLink = (index: number) => {
     const newLinks = socialLinks.filter((_, i) => i !== index)
     setSocialLinks(newLinks)
     saveData('contact-social-links', newLinks)
-    // 소셜 링크는 별도 저장 로직 필요 - 현재는 localStorage만 사용
   }
 
   // QR 코드에 포함할 내용 결정
@@ -139,7 +162,6 @@ export function Contact() {
     if (qrContent.includes('company') && contactInfo.company) {
       vCard += `ORG:${contactInfo.company}\n`
     }
-    // TITLE 필드는 갤럭시에서 지원 안 함 - 이름에 포함시켰으므로 생략
     
     // 전화번호
     if (qrContent.includes('phone')) {
@@ -183,6 +205,12 @@ export function Contact() {
   // QR 코드 이미지 URL (외부 API 사용 - businessCard 프로젝트처럼)
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodedVCard}`
 
+  // 언어/모드에 따라 보여줄 텍스트 결정
+  const sectionTitleText = isPT ? CONTACT_PT_TEXT.sectionTitle : contactInfo.sectionTitle
+  const sectionSubtitleText = isPT ? CONTACT_PT_TEXT.sectionSubtitle : contactInfo.sectionSubtitle
+  const bottomMessageText = isPT ? CONTACT_PT_TEXT.bottomMessage : contactInfo.bottomMessage
+  const bottomSubMessageText = isPT ? CONTACT_PT_TEXT.bottomSubMessage : contactInfo.bottomSubMessage
+
   return (
     <EditableBackground
       image={backgroundData.image}
@@ -206,16 +234,35 @@ export function Contact() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* 섹션 제목 */}
         <div className="text-center mb-16">
+          {/* 언어 토글 */}
+          <div className="flex justify-center gap-2 mb-3 text-sm text-muted-foreground">
+            <button
+              type="button"
+              onClick={() => setLang("ko")}
+              className={lang === "ko" ? "font-semibold underline" : "opacity-60 hover:opacity-100"}
+            >
+              한국어
+            </button>
+            <span>/</span>
+            <button
+              type="button"
+              onClick={() => setLang("pt")}
+              className={lang === "pt" ? "font-semibold underline" : "opacity-60 hover:opacity-100"}
+            >
+              Português
+            </button>
+          </div>
+
           <h2 className="text-4xl sm:text-5xl font-bold text-foreground mb-4">
             <EditableText
-              value={contactInfo.sectionTitle}
+              value={sectionTitleText}
               onChange={(value) => updateContactInfo('sectionTitle', value)}
               storageKey="contact-sectionTitle"
             />
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             <EditableText
-              value={contactInfo.sectionSubtitle}
+              value={sectionSubtitleText}
               onChange={(value) => updateContactInfo('sectionSubtitle', value)}
               storageKey="contact-sectionSubtitle"
               multiline
@@ -229,7 +276,9 @@ export function Contact() {
           <div className="space-y-6">
             {/* 프로필 섹션 헤더 */}
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-foreground">프로필 정보</h3>
+              <h3 className="text-lg font-semibold text-foreground">
+                {isPT ? CONTACT_PT_TEXT.profileHeader : "프로필 정보"}
+              </h3>
               {isEditMode && (
                 <button
                   onClick={() => setShowProfileModal(true)}
@@ -277,7 +326,9 @@ export function Contact() {
                       <Phone className="h-5 w-5 text-green-600" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs text-muted-foreground">전화</p>
+                      <p className="text-xs text-muted-foreground">
+                        {isPT ? CONTACT_PT_TEXT.phoneLabel : "전화"}
+                      </p>
                       <p className="text-sm font-medium text-foreground truncate">
                         {contactInfo.phone}
                       </p>
@@ -297,7 +348,9 @@ export function Contact() {
                       <Mail className="h-5 w-5 text-blue-600" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs text-muted-foreground">이메일</p>
+                      <p className="text-xs text-muted-foreground">
+                        {isPT ? CONTACT_PT_TEXT.emailLabel : "이메일"}
+                      </p>
                       <p className="text-sm font-medium text-foreground truncate">
                         {contactInfo.email}
                       </p>
@@ -313,7 +366,9 @@ export function Contact() {
                     <MapPin className="h-5 w-5 text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs text-muted-foreground">위치</p>
+                    <p className="text-xs text-muted-foreground">
+                      {isPT ? CONTACT_PT_TEXT.locationLabel : "위치"}
+                    </p>
                     <p className="text-sm font-medium text-foreground truncate">
                         {contactInfo.location}
                     </p>
@@ -328,7 +383,9 @@ export function Contact() {
                     <Clock className="h-5 w-5 text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs text-muted-foreground">업무시간</p>
+                    <p className="text-xs text-muted-foreground">
+                      {isPT ? CONTACT_PT_TEXT.workTimeLabel : "업무시간"}
+                    </p>
                     <p className="text-sm font-medium text-foreground truncate">
                         {contactInfo.workTime}
                     </p>
@@ -339,7 +396,9 @@ export function Contact() {
 
             {/* 소셜 미디어 섹션 헤더 */}
             <div className="flex items-center justify-between mb-4 mt-8">
-              <h3 className="text-lg font-semibold text-foreground">소셜 미디어</h3>
+              <h3 className="text-lg font-semibold text-foreground">
+                {isPT ? CONTACT_PT_TEXT.socialHeader : "소셜 미디어"}
+              </h3>
               {isEditMode && (
                 <button
                   onClick={() => setShowSocialModal(true)}
@@ -444,12 +503,17 @@ export function Contact() {
             <Card className="p-8 border-0 shadow-xl bg-gradient-to-br from-card to-muted/20">
               <div className="text-center mb-6">
                 <h4 className="text-xl font-bold text-foreground mb-2">
-                  QR 코드로 연락처 저장
+                  {isPT ? CONTACT_PT_TEXT.qrTitle : "QR 코드로 연락처 저장"}
                 </h4>
                 <p className="text-sm text-muted-foreground mb-3">
-                  {contactInfo.qrContent && contactInfo.qrContent.length > 0 
-                    ? '스캔하면 선택한 정보가 연락처로 저장됩니다'
-                    : 'QR 코드에 포함할 정보를 선택해주세요'
+                  {isPT
+                    ? (contactInfo.qrContent && contactInfo.qrContent.length > 0
+                        ? CONTACT_PT_TEXT.qrSubtitleSelected
+                        : CONTACT_PT_TEXT.qrSubtitleEmpty)
+                    : (contactInfo.qrContent && contactInfo.qrContent.length > 0 
+                        ? '스캔하면 선택한 정보가 연락처로 저장됩니다'
+                        : 'QR 코드에 포함할 정보를 선택해주세요'
+                      )
                   }
                 </p>
                 {/* QR 설정 버튼 - 중앙 정렬 */}
@@ -481,22 +545,23 @@ export function Contact() {
               {/* QR 설명 - 선택된 정보에 따라 동적으로 변경 */}
               <div className="bg-muted/50 rounded-lg p-4">
                 <p className="text-xs text-muted-foreground text-center">
-                  📱 스캔하면 연락처가 자동 저장됩니다
+                  {isPT ? CONTACT_PT_TEXT.qrNoteMain : "📱 스캔하면 연락처가 자동 저장됩니다"}
                 </p>
                 <p className="text-xs text-muted-foreground text-center mt-1">
-                  포함된 정보: {
+                  {isPT ? CONTACT_PT_TEXT.qrIncludedLabel : "포함된 정보: "}
+                  {
                     contactInfo.qrContent?.map(key => {
                       switch(key) {
-                        case 'name': return '이름'
-                        case 'phone': return '전화번호'
-                        case 'email': return '이메일'
-                        case 'title': return '직함'
-                        case 'company': return '회사'
-                        case 'location': return '위치'
-                        case 'website': return '웹사이트'
+                        case 'name': return isPT ? 'Nome' : '이름'
+                        case 'phone': return isPT ? 'Telefone' : '전화번호'
+                        case 'email': return isPT ? 'E-mail' : '이메일'
+                        case 'title': return isPT ? 'Cargo' : '직함'
+                        case 'company': return isPT ? 'Empresa' : '회사'
+                        case 'location': return isPT ? 'Localização' : '위치'
+                        case 'website': return isPT ? 'Website' : '웹사이트'
                         default: return key
                       }
-                    }).join(', ') || '없음'
+                    }).join(', ') || (isPT ? 'Nenhuma' : '없음')
                   }
                 </p>
               </div>
@@ -509,14 +574,14 @@ export function Contact() {
         <div className="mt-16 text-center p-8 bg-primary/5 rounded-2xl">
           <p className="text-lg font-medium text-foreground mb-2">
             <EditableText
-              value={contactInfo.bottomMessage}
+              value={bottomMessageText}
               onChange={(value) => updateContactInfo('bottomMessage', value)}
               storageKey="contact-bottomMessage"
             />
           </p>
           <p className="text-muted-foreground">
             <EditableText
-              value={contactInfo.bottomSubMessage}
+              value={bottomSubMessageText}
               onChange={(value) => updateContactInfo('bottomSubMessage', value)}
               storageKey="contact-bottomSubMessage"
             />
@@ -681,7 +746,7 @@ export function Contact() {
         </div>
       )}
       
-      {/* 소셜 미디어 편집 모달 - Hero와 동일한 스타일 */}
+      {/* 소셜 미디어 편집 모달 */}
       {showSocialModal && isEditMode && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100]">
           <div className="bg-background border rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
