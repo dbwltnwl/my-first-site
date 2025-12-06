@@ -3,7 +3,75 @@
 import * as React from "react"
 import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
-import { Briefcase, GraduationCap, Award, Heart, Coffee, Book, Plus, X, Settings, Calendar, Building, User, Trophy, Star, Lightbulb, Target, Rocket, Shield, Sparkles, Code, Database, Palette, Megaphone, BarChart3, LineChart, PieChart, Activity, Brain, Cpu, Layers, Package, Server, Smartphone, Monitor, Wifi, Cloud, Lock, Key, Eye, Search, Filter, Edit, FileText, FolderOpen, GitBranch, Hash, Inbox, Send, MessageSquare, Music, Camera, Video, Mic, Volume2, Headphones, Radio, Zap, Globe, Users, TrendingUp, BookOpen, MapPin, Clock, CheckCircle, AlertCircle, Home, School } from "lucide-react"
+import {
+  Briefcase,
+  GraduationCap,
+  Award,
+  Heart,
+  Coffee,
+  Book,
+  Plus,
+  X,
+  Settings,
+  Calendar,
+  Building,
+  User,
+  Trophy,
+  Star,
+  Lightbulb,
+  Target,
+  Rocket,
+  Shield,
+  Sparkles,
+  Code,
+  Database,
+  Palette,
+  Megaphone,
+  BarChart3,
+  LineChart,
+  PieChart,
+  Activity,
+  Brain,
+  Cpu,
+  Layers,
+  Package,
+  Server,
+  Smartphone,
+  Monitor,
+  Wifi,
+  Cloud,
+  Lock,
+  Key,
+  Eye,
+  Search,
+  Filter,
+  Edit,
+  FileText,
+  FolderOpen,
+  GitBranch,
+  Hash,
+  Inbox,
+  Send,
+  MessageSquare,
+  Music,
+  Camera,
+  Video,
+  Mic,
+  Volume2,
+  Headphones,
+  Radio,
+  Zap,
+  Globe,
+  Users,
+  TrendingUp,
+  BookOpen,
+  MapPin,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+  Home,
+  School,
+} from "lucide-react"
 import { EditableText } from "@/components/editable/editable-text"
 import { EditableMedia } from "@/components/editable/editable-media"
 import { EditableBackground } from "@/components/editable/editable-background"
@@ -92,9 +160,10 @@ const SKILL_ICONS = {
   users: Users,
 }
 
-// 언어 타입 및 포르투갈어 텍스트
+// 언어 타입
 type AboutLang = "ko" | "pt"
 
+// 포르투갈어 텍스트 (섹션/스토리)
 const ABOUT_PT_TEXT = {
   title: "Sobre mim",
   subtitle:
@@ -110,6 +179,49 @@ const ABOUT_PT_TEXT = {
   hobbiesSectionTitle: "Hobbies & interesses",
 } as const
 
+// 포르투갈어 버전 경험 카드 (인덱스 기준)
+const ABOUT_PT_EXPERIENCE = [
+  {
+    title: "Universidade Dankook",
+    period: "mar. 2023 ~ fev. 2027 (previsto)",
+    description: "Bacharelado em Estudos Portugueses e Brasileiros",
+  },
+  {
+    title: "Intercâmbio em Portugal",
+    period: "fev. 2024 ~ jul. 2024",
+    description: "University of Coimbra • Programa de intercâmbio acadêmico",
+  },
+  {
+    title: "Certificação de Gestora de Investimentos",
+    period: "Aprovada no 43º exame em 2025",
+    description: "",
+  },
+  {
+    title: "FLEX (Foreign Language EXamination)",
+    period: "2023-2",
+    description: "Exame de proficiência em língua estrangeira",
+  },
+]
+
+// 포르투갈어 버전 스킬 (인덱스 기준)
+const ABOUT_PT_SKILLS = [
+  {
+    title: "Pesquisa urbana e imobiliária em perspectiva internacional",
+    description:
+      "Comparo estruturas urbanas e problemas habitacionais em países como Brasil e Europa.",
+  },
+  {
+    title: "Compreensão de políticas urbanas e imobiliárias",
+    description:
+      "Analiso como políticas de habitação, requalificação e infraestrutura impactam o espaço urbano.",
+  },
+  {
+    title: "Especialização em estudos regionais",
+    description:
+      "Interpreto políticas locais, problemas urbanos e dados de mercado do Brasil a partir de fontes em português.",
+  },
+]
+
 export function About() {
   const { getData, saveData, isEditMode, saveToFile } = useInlineEditor()
 
@@ -123,10 +235,30 @@ export function About() {
     subtitle: "당신의 전문성과 열정을 소개해주세요.",
     background: { image: "", video: "", color: "", opacity: 0.1 },
     experienceCards: [
-      { icon: "briefcase", title: "단국대학교", period: "2023.03 ~ 2027.02 (예정)", description: "포르투갈·브라질학 전공" },
-      { icon: "graduation", title: "포르투갈 교환학생", period: "2024.02 ~ 2024.07", description: "University of Coimbra" },
-      { icon: "award", title: "투자자산운용사", period: "2025년 제43회 합격", description: "" },
-      { icon: "award", title: "FLEX (Foreign Language EXamination)", period: "2023-2", description: "" },
+      {
+        icon: "briefcase",
+        title: "단국대학교",
+        period: "2023.03 ~ 2027.02 (예정)",
+        description: "포르투갈·브라질학 전공",
+      },
+      {
+        icon: "graduation",
+        title: "포르투갈 교환학생",
+        period: "2024.02 ~ 2024.07",
+        description: "University of Coimbra",
+      },
+      {
+        icon: "award",
+        title: "투자자산운용사",
+        period: "2025년 제43회 합격",
+        description: "",
+      },
+      {
+        icon: "award",
+        title: "FLEX (Foreign Language EXamination)",
+        period: "2023-2",
+        description: "",
+      },
     ],
     skills: [
       {
@@ -137,7 +269,8 @@ export function About() {
       {
         icon: "search",
         title: "부동산 및 도시 정책 이해",
-        description: "주거, 재생, 개발, 인프라 등 도시를 둘러싼 구조와 정책의 영향을 함께 살펴봅니다.",
+        description:
+          "주거, 재생, 개발, 인프라 등 도시를 둘러싼 구조와 정책의 영향을 함께 살펴봅니다.",
       },
       {
         icon: "lightbulb",
@@ -162,14 +295,38 @@ export function About() {
   const [showSkillModal, setShowSkillModal] = useState(false)
   const [showHobbyModal, setShowHobbyModal] = useState(false)
 
-  // localStorage에서 데이터 로드 - 편집 모드가 변경될 때마다 실행
+  // localStorage에서 데이터 로드 + "텍스트를 입력하세요" 자동 제거
   useEffect(() => {
     const savedData = getData("about-info") as typeof defaultInfo | null
+    let merged = defaultInfo
+
     if (savedData) {
-      setAboutInfo({ ...defaultInfo, ...savedData })
-      if (savedData.background) {
-        setBackgroundData(savedData.background)
+      merged = { ...defaultInfo, ...savedData }
+
+      // 경험 카드 클린업
+      if (merged.experienceCards) {
+        merged.experienceCards = merged.experienceCards.map((card) => ({
+          ...card,
+          title: card.title === "텍스트를 입력하세요" ? "" : card.title,
+          period: card.period === "텍스트를 입력하세요" ? "" : card.period,
+          description: card.description === "텍스트를 입력하세요" ? "" : card.description,
+        }))
       }
+
+      // 스킬 클린업
+      if (merged.skills) {
+        merged.skills = merged.skills.map((skill) => ({
+          ...skill,
+          title: skill.title === "텍스트를 입력하세요" ? "" : skill.title,
+          description: skill.description === "텍스트를 입력하세요" ? "" : skill.description,
+        }))
+      }
+    }
+
+    setAboutInfo(merged)
+
+    if (merged.background) {
+      setBackgroundData(merged.background)
     }
 
     const savedBg = getData("about-background") as {
@@ -181,7 +338,7 @@ export function About() {
     if (savedBg) {
       setBackgroundData(savedBg)
     }
-  }, [getData, isEditMode]) // isEditMode가 변경될 때마다 데이터 다시 로드
+  }, [getData, isEditMode])
 
   const updateAboutInfo = (
     key: string,
@@ -289,7 +446,6 @@ export function About() {
         setBackgroundData(newData)
         saveData("about-background", newData)
 
-        // aboutInfo도 업데이트 (파일 저장을 위해)
         const updatedAboutInfo = { ...aboutInfo, background: newData }
         setAboutInfo(updatedAboutInfo)
         saveData("about-info", updatedAboutInfo)
@@ -337,11 +493,19 @@ export function About() {
             </p>
           </div>
 
-          {/* 경험 카드 (경력/학력/자격증 등) */}
+          {/* 경험 카드 */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-            {/* 경험 카드들 */}
             {aboutInfo.experienceCards?.map((card, index) => {
               const Icon = AVAILABLE_ICONS[card.icon as keyof typeof AVAILABLE_ICONS] || Briefcase
+
+              const ptExp = ABOUT_PT_EXPERIENCE[index]
+              const titleValue = isPT && ptExp?.title ? ptExp.title : card.title
+              const periodValue = isPT && ptExp?.period ? ptExp.period : card.period
+              const descValue =
+                isPT && typeof ptExp?.description === "string" && ptExp.description !== ""
+                  ? ptExp.description
+                  : card.description
+
               return (
                 <Card
                   key={index}
@@ -363,21 +527,21 @@ export function About() {
                       <div className="flex-1">
                         <h3 className="font-semibold text-foreground mb-1">
                           <EditableText
-                            value={card.title}
+                            value={titleValue}
                             onChange={(value) => updateExperienceCard(index, "title", value)}
                             storageKey={`about-experience-${index}-title`}
                           />
                         </h3>
                         <p className="text-sm text-primary mb-2">
                           <EditableText
-                            value={card.period}
+                            value={periodValue}
                             onChange={(value) => updateExperienceCard(index, "period", value)}
                             storageKey={`about-experience-${index}-period`}
                           />
                         </p>
                         <p className="text-sm text-muted-foreground">
                           <EditableText
-                            value={card.description}
+                            value={descValue}
                             onChange={(value) =>
                               updateExperienceCard(index, "description", value)
                             }
@@ -391,7 +555,7 @@ export function About() {
               )
             })}
 
-            {/* 추가 버튼 */}
+            {/* 경험 카드 편집 버튼 */}
             {isEditMode && (
               <Card
                 className="border-2 border-dashed border-muted-foreground/30 shadow-none hover:border-primary transition-all cursor-pointer"
@@ -416,6 +580,12 @@ export function About() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {aboutInfo.skills.map((skill, index) => {
                   const Icon = SKILL_ICONS[skill.icon as keyof typeof SKILL_ICONS] || Trophy
+                  const ptSkill = ABOUT_PT_SKILLS[index]
+
+                  const titleValue = isPT && ptSkill?.title ? ptSkill.title : skill.title
+                  const descValue =
+                    isPT && ptSkill?.description ? ptSkill.description : skill.description
+
                   return (
                     <div key={index} className="text-center relative">
                       {isEditMode && (
@@ -431,14 +601,14 @@ export function About() {
                       </div>
                       <h4 className="font-semibold text-foreground mb-2">
                         <EditableText
-                          value={skill.title}
+                          value={titleValue}
                           onChange={(value) => updateSkill(index, "title", value)}
                           storageKey={`about-skill-${index}-title`}
                         />
                       </h4>
                       <p className="text-sm text-muted-foreground">
                         <EditableText
-                          value={skill.description}
+                          value={descValue}
                           onChange={(value) =>
                             updateSkill(index, "description", value)
                           }
@@ -621,7 +791,7 @@ export function About() {
                         type="text"
                         value={card.title}
                         onChange={(e) => updateExperienceCard(index, "title", e.target.value)}
-                        placeholder="예: ABC 회사, 단국대학교, 자격증 이름"
+                        placeholder="예: 단국대학교, 교환학생, 자격증 이름"
                         className="w-full px-3 py-2 border rounded-lg bg-background font-semibold"
                       />
 
@@ -640,7 +810,7 @@ export function About() {
                           onChange={(e) =>
                             updateExperienceCard(index, "description", e.target.value)
                           }
-                          placeholder="예: 전공, 직무, 수상 내용 등"
+                          placeholder="예: 전공, 프로그램, 합격 정보 등"
                           className="flex-1 px-3 py-2 border rounded-lg bg-background"
                         />
                       </div>
@@ -770,16 +940,14 @@ export function About() {
                         type="text"
                         value={skill.title}
                         onChange={(e) => updateSkill(index, "title", e.target.value)}
-                        placeholder="예: 프론트엔드 개발, 데이터 분석, 프로젝트 관리"
+                        placeholder="예: 데이터 분석, 도시 정책 연구"
                         className="w-full px-3 py-2 border rounded-lg bg-background font-semibold"
                       />
 
                       <textarea
                         value={skill.description}
-                        onChange={(e) =>
-                          updateSkill(index, "description", e.target.value)
-                        }
-                        placeholder="예: React와 TypeScript를 활용한 모던 웹 애플리케이션 개발"
+                        onChange={(e) => updateSkill(index, "description", e.target.value)}
+                        placeholder="예: 브라질·유럽 도시 구조와 주거 문제 비교 분석 등"
                         className="w-full px-3 py-2 border rounded-lg bg-background resize-none"
                         rows={2}
                       />
