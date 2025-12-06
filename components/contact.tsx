@@ -29,6 +29,35 @@ import { EditableText } from "@/components/editable/editable-text"
 import { EditableBackground } from "@/components/editable/editable-background"
 import { useInlineEditor } from "@/contexts/inline-editor-context"
 
+// 🔹 전역 언어 타입 & 훅 (Hero/About/Projects와 동일 패턴)
+type SiteLang = "ko" | "pt"
+
+function useSiteLang() {
+  const [lang, setLang] = useState<SiteLang>("ko")
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+
+    const stored = window.localStorage.getItem("site-lang")
+    if (stored === "ko" || stored === "pt") {
+      setLang(stored)
+    }
+
+    const handler = (e: Event) => {
+      const anyEvent = e as CustomEvent
+      const next = anyEvent.detail?.lang
+      if (next === "ko" || next === "pt") {
+        setLang(next)
+      }
+    }
+
+    window.addEventListener("site-lang-change", handler as EventListener)
+    return () => window.removeEventListener("site-lang-change", handler as EventListener)
+  }, [])
+
+  return lang
+}
+
 // 사용 가능한 소셜 아이콘 정의
 const AVAILABLE_ICONS = {
   instagram: Instagram,
@@ -45,9 +74,7 @@ const AVAILABLE_ICONS = {
   mail: Mail,
 }
 
-// 언어 타입 및 포르투갈어 텍스트
-type ContactLang = "ko" | "pt"
-
+// 포르투갈어 UI 텍스트 모음
 const CONTACT_PT_TEXT = {
   sectionTitle: "Contato",
   sectionSubtitle:
@@ -59,30 +86,25 @@ const CONTACT_PT_TEXT = {
   workTimeLabel: "Horário",
   socialHeader: "Redes sociais",
   qrTitle: "Salvar contato via QR code",
-  qrSubtitleSelected:
-    "Ao escanear, as informações selecionadas serão salvas como contato.",
-  qrSubtitleEmpty:
-    "Selecione quais informações deseja incluir no QR code.",
+  qrSubtitleSelected: "Ao escanear, as informações selecionadas serão salvas como contato.",
+  qrSubtitleEmpty: "Selecione quais informações deseja incluir no QR code.",
   qrNoteMain: "📱 Ao escanear, o contato é salvo automaticamente.",
   qrIncludedLabel: "Informações incluídas: ",
-  bottomMessage: "Vamos crescer juntos como parceiras(o) de projeto.",
-  bottomSubMessage:
-    "Farei o meu melhor para o sucesso dos seus projetos.",
+  bottomMessage: "Vamos crescer juntas(os) como parceiras(os) de projeto.",
+  bottomSubMessage: "Farei o meu melhor para o sucesso dos seus projetos.",
 } as const
 
 export function Contact() {
   const { getData, saveData, isEditMode, saveToFile } = useInlineEditor()
+  const lang = useSiteLang()
+  const isPT = !isEditMode && lang === "pt"
 
   const [showProfileModal, setShowProfileModal] = useState(false)
   const [showSocialModal, setShowSocialModal] = useState(false)
   const [showQRModal, setShowQRModal] = useState(false)
   const [showIconPicker, setShowIconPicker] = useState<number | null>(null)
 
-  // 표시 언어 상태
-  const [lang, setLang] = useState<ContactLang>("ko")
-  const isPT = lang === "pt" // ✅ 편집 모드에서도 포어로 전환
-
-  // 기본 데이터
+  // 기본 데이터 (한국어 기준)
   const defaultInfo = {
     name: "유지수",
     title: "단국대학교 포르투갈브라질학과 재학생",
@@ -95,14 +117,12 @@ export function Contact() {
     workTime: "평일 09:00 - 18:00",
     responseTime: "24시간 이내 응답",
     sectionTitle: "연락처",
-    sectionSubtitle:
-      "프로젝트 문의나 협업 제안을 기다리고 있습니다. 편하신 방법으로 연락주세요!",
+    sectionSubtitle: "프로젝트 문의나 협업 제안을 기다리고 있습니다. 편하신 방법으로 연락주세요!",
     qrTitle: "QR 코드로 연락처 저장",
     qrSubtitle: "스캔하면 연락처가 자동으로 저장됩니다",
     bottomMessage: "함께 성장하는 파트너가 되겠습니다.",
-    bottomSubMessage:
-      "고객님의 성공적인 프로젝트를 위해 최선을 다하겠습니다.",
-    qrContent: ["name", "phone", "email", "location", "website"] as string[],
+    bottomSubMessage: "고객님의 성공적인 프로젝트를 위해 최선을 다하겠습니다.",
+    qrContent: ["name", "phone", "email", "location", "website"],
     profileEmoji: "👤",
     background: { image: "", video: "", color: "", opacity: 0.1 },
   }
@@ -120,43 +140,43 @@ export function Contact() {
     if (savedData) {
       setContactInfo({ ...defaultInfo, ...savedData })
       if (savedData.background) {
-        setBackgroundData(savedData.background as any)
+        setBackgroundData(savedData.background)
       }
     }
 
-    const savedSocial = getData(
-      "contact-social-links",
-    ) as { name: string; icon: string; url: string }[] | null
+    const savedSocial = getData("contact-social-links") as
+      | { name: string; icon: string; url: string }[]
+      | null
     if (savedSocial) {
       setSocialLinks(savedSocial)
     }
 
-    const savedBg = getData("contact-background") as
-      | { image: string; video: string; color: string; opacity: number }
-      | null
+    const savedBg = getData("contact-background") as {
+      image: string
+      video: string
+      color: string
+      opacity: number
+    } | null
     if (savedBg) {
       setBackgroundData(savedBg)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEditMode])
 
-  const updateContactInfo = (key: string, value: any) => {
-    const newInfo = { ...contactInfo, [key]: value }
+  const updateContactInfo = (key: string, value: string) => {
+    const newInfo = { ...contactInfo, [key]: value as any }
     setContactInfo(newInfo)
     saveData("contact-info", newInfo)
   }
 
   const addSocialLink = () => {
-    const newLinks = [...socialLinks, { name: "새 링크", icon: "globe", url: "" }]
+    const newLinks = [...socialLinks]
+    newLinks.push({ name: "새 링크", icon: "globe", url: "" })
     setSocialLinks(newLinks)
     saveData("contact-social-links", newLinks)
   }
 
-  const updateSocialLink = (
-    index: number,
-    field: "name" | "icon" | "url",
-    value: string,
-  ) => {
+  const updateSocialLink = (index: number, field: "name" | "icon" | "url", value: string) => {
     const newLinks = [...socialLinks]
     newLinks[index] = { ...newLinks[index], [field]: value }
     setSocialLinks(newLinks)
@@ -169,11 +189,11 @@ export function Contact() {
     saveData("contact-social-links", newLinks)
   }
 
-  // QR 코드에 포함할 내용 결정
+  // QR 코드 vCard 생성
   const generateVCard = () => {
     const qrContent =
-      contactInfo.qrContent && contactInfo.qrContent.length > 0
-        ? contactInfo.qrContent
+      contactInfo.qrContent && (contactInfo.qrContent as any).length > 0
+        ? (contactInfo.qrContent as any as string[])
         : ["name", "phone", "email"]
     let vCard = "BEGIN:VCARD\nVERSION:3.0\n"
 
@@ -181,6 +201,7 @@ export function Contact() {
       const displayName = contactInfo.title
         ? `${contactInfo.name} (${contactInfo.title})`
         : contactInfo.name
+
       vCard += `FN:${displayName}\n`
       vCard += `N:${contactInfo.name};;;;\n`
     }
@@ -222,33 +243,15 @@ export function Contact() {
   const encodedVCard = encodeURIComponent(vCardString.trim())
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodedVCard}`
 
-  // 언어/모드에 따라 보여줄 텍스트 결정
+  // 언어별로 화면에 보여줄 텍스트
   const sectionTitleText = isPT ? CONTACT_PT_TEXT.sectionTitle : contactInfo.sectionTitle
   const sectionSubtitleText = isPT
     ? CONTACT_PT_TEXT.sectionSubtitle
     : contactInfo.sectionSubtitle
-  const bottomMessageText = isPT
-    ? CONTACT_PT_TEXT.bottomMessage
-    : contactInfo.bottomMessage
+  const bottomMessageText = isPT ? CONTACT_PT_TEXT.bottomMessage : contactInfo.bottomMessage
   const bottomSubMessageText = isPT
     ? CONTACT_PT_TEXT.bottomSubMessage
     : contactInfo.bottomSubMessage
-
-  // 이름/학과/3학년/응답/위치/업무시간 포르투갈어 버전
-  const profileNameText = isPT ? "Yu Jisu" : contactInfo.name
-  const profileTitleText = isPT
-    ? "Estudante do Departamento de Português e Estudos Brasileiros da Universidade Dankook"
-    : contactInfo.title
-  const profileExperienceText = isPT ? "3º ano" : contactInfo.experience
-  const profileResponseTimeText = isPT
-    ? "Respondo em até 24 horas"
-    : contactInfo.responseTime
-  const locationValueText = isPT
-    ? "Seongnam, Província de Gyeonggi, Coreia do Sul"
-    : contactInfo.location
-  const workTimeValueText = isPT
-    ? "Seg–Sex 09:00–18:00 (horário da Coreia)"
-    : contactInfo.workTime
 
   return (
     <EditableBackground
@@ -272,33 +275,6 @@ export function Contact() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* 섹션 제목 */}
           <div className="text-center mb-16">
-            {/* 언어 토글 */}
-            <div className="flex justify-center gap-2 mb-3 text-sm text-muted-foreground">
-              <button
-                type="button"
-                onClick={() => setLang("ko")}
-                className={
-                  lang === "ko"
-                    ? "font-semibold underline"
-                    : "opacity-60 hover:opacity-100"
-                }
-              >
-                한국어
-              </button>
-              <span>/</span>
-              <button
-                type="button"
-                onClick={() => setLang("pt")}
-                className={
-                  lang === "pt"
-                    ? "font-semibold underline"
-                    : "opacity-60 hover:opacity-100"
-                }
-              >
-                Português
-              </button>
-            </div>
-
             <h2 className="text-4xl sm:text-5xl font-bold text-foreground mb-4">
               <EditableText
                 value={sectionTitleText}
@@ -316,9 +292,9 @@ export function Contact() {
             </p>
           </div>
 
-          {/* 메인 좌우 분할 레이아웃 */}
+          {/* 메인 레이아웃 */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* 왼쪽: 연락처 정보 */}
+            {/* 왼쪽: 프로필 + 연락 수단 + 소셜 */}
             <div className="space-y-6">
               {/* 프로필 섹션 헤더 */}
               <div className="flex items-center justify-between mb-4">
@@ -340,30 +316,34 @@ export function Contact() {
               {/* 프로필 카드 */}
               <Card className="p-8 border-0 shadow-xl bg-gradient-to-br from-card to-muted/20">
                 <div className="flex items-start gap-6">
-                  {/* 프로필 이미지 자리 */}
                   <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <span className="text-3xl">
-                      {contactInfo.profileEmoji || "👤"}
-                    </span>
+                    <span className="text-3xl">{contactInfo.profileEmoji || "👤"}</span>
                   </div>
                   <div className="flex-1">
+                    {/* 이름 */}
                     <h3 className="text-2xl font-bold text-foreground mb-1">
-                      {profileNameText}
+                      {isPT ? "Yu Jisu" : contactInfo.name}
                     </h3>
+                    {/* 학과/직함 */}
                     <p className="text-lg text-primary mb-2">
-                      {profileTitleText}
+                      {isPT
+                        ? "Estudante do Departamento de Português e Estudos Brasileiros da Universidade Dankook"
+                        : contactInfo.title}
                     </p>
+                    {/* 학년 + 응답 시간 */}
                     <p className="text-muted-foreground">
-                      {profileExperienceText}
-                      {profileResponseTimeText && ` | ${profileResponseTimeText}`}
+                      {isPT ? "3º ano" : contactInfo.experience}{" "}
+                      {isPT
+                        ? "| Respondo em até 24 horas"
+                        : contactInfo.responseTime && `| ${contactInfo.responseTime}`}
                     </p>
                   </div>
                 </div>
               </Card>
 
-              {/* 주요 연락 수단 그리드 */}
+              {/* 주요 연락 수단 */}
               <div className="grid grid-cols-2 gap-4">
-                {/* 전화 카드 */}
+                {/* 전화 */}
                 <a href={`tel:${contactInfo.phone}`} className="group">
                   <Card className="p-5 border-0 shadow-lg hover:shadow-xl transition-all hover:scale-105 cursor-pointer">
                     <div className="flex items-center gap-3">
@@ -382,7 +362,7 @@ export function Contact() {
                   </Card>
                 </a>
 
-                {/* 이메일 카드 */}
+                {/* 이메일 */}
                 <a href={`mailto:${contactInfo.email}`} className="group">
                   <Card className="p-5 border-0 shadow-lg hover:shadow-xl transition-all hover:scale-105 cursor-pointer">
                     <div className="flex items-center gap-3">
@@ -401,7 +381,7 @@ export function Contact() {
                   </Card>
                 </a>
 
-                {/* 위치 카드 */}
+                {/* 위치 */}
                 <Card className="p-5 border-0 shadow-lg">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
@@ -412,13 +392,15 @@ export function Contact() {
                         {isPT ? CONTACT_PT_TEXT.locationLabel : "위치"}
                       </p>
                       <p className="text-sm font-medium text-foreground truncate">
-                        {locationValueText}
+                        {isPT
+                          ? "Seongnam, Província de Gyeonggi, Coreia do Sul"
+                          : contactInfo.location}
                       </p>
                     </div>
                   </div>
                 </Card>
 
-                {/* 업무시간 카드 */}
+                {/* 업무시간 */}
                 <Card className="p-5 border-0 shadow-lg">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
@@ -429,15 +411,17 @@ export function Contact() {
                         {isPT ? CONTACT_PT_TEXT.workTimeLabel : "업무시간"}
                       </p>
                       <p className="text-sm font-medium text-foreground truncate">
-                        {workTimeValueText}
+                        {isPT
+                          ? "Seg–Sex 09:00–18:00 (horário da Coreia)"
+                          : contactInfo.workTime}
                       </p>
                     </div>
                   </div>
                 </Card>
               </div>
 
-              {/* 소셜 미디어 섹션 헤더 */}
-              <div className="flex items-center justify_between mb-4 mt-8">
+              {/* 소셜 미디어 섹션 */}
+              <div className="flex items-center justify-between mb-4 mt-8">
                 <h3 className="text-lg font-semibold text-foreground">
                   {isPT ? CONTACT_PT_TEXT.socialHeader : "소셜 미디어"}
                 </h3>
@@ -453,15 +437,12 @@ export function Contact() {
                 )}
               </div>
 
-              {/* 소셜 미디어 카드 */}
               <Card className="p-6 border-0 shadow-lg">
                 <div className="flex flex-wrap gap-3">
                   {socialLinks.map((link, index) => {
                     if (!link.url) return null
                     const Icon =
-                      AVAILABLE_ICONS[
-                        link.icon as keyof typeof AVAILABLE_ICONS
-                      ] || Globe
+                      AVAILABLE_ICONS[link.icon as keyof typeof AVAILABLE_ICONS] || Globe
                     const isEmail =
                       link.icon === "mail" || link.url.startsWith("mailto:")
                     const href =
@@ -534,7 +515,6 @@ export function Contact() {
                     )
                   })}
                 </div>
-
                 {socialLinks.every((link) => !link.url) && (
                   <p className="text-sm text-muted-foreground">
                     소셜 미디어 링크를 추가해주세요
@@ -543,7 +523,7 @@ export function Contact() {
               </Card>
             </div>
 
-            {/* 오른쪽: QR 코드 & 추가 정보 */}
+            {/* 오른쪽: QR 코드 */}
             <div className="space-y-6">
               <Card className="p-8 border-0 shadow-xl bg-gradient-to-br from-card to-muted/20">
                 <div className="text-center mb-6">
@@ -553,11 +533,11 @@ export function Contact() {
                   <p className="text-sm text-muted-foreground mb-3">
                     {isPT
                       ? contactInfo.qrContent &&
-                        contactInfo.qrContent.length > 0
+                        (contactInfo.qrContent as any).length > 0
                         ? CONTACT_PT_TEXT.qrSubtitleSelected
                         : CONTACT_PT_TEXT.qrSubtitleEmpty
                       : contactInfo.qrContent &&
-                        contactInfo.qrContent.length > 0
+                        (contactInfo.qrContent as any).length > 0
                       ? "스캔하면 선택한 정보가 연락처로 저장됩니다"
                       : "QR 코드에 포함할 정보를 선택해주세요"}
                   </p>
@@ -592,29 +572,34 @@ export function Contact() {
                       : "📱 스캔하면 연락처가 자동 저장됩니다"}
                   </p>
                   <p className="text-xs text-muted-foreground text-center mt-1">
-                    {isPT
-                      ? CONTACT_PT_TEXT.qrIncludedLabel
-                      : "포함된 정보: "}
-                    {contactInfo.qrContent?.map((key) => {
-                      switch (key) {
-                        case "name":
-                          return isPT ? "Nome" : "이름"
-                        case "phone":
-                          return isPT ? "Telefone" : "전화번호"
-                        case "email":
-                          return isPT ? "E-mail" : "이메일"
-                        case "title":
-                          return isPT ? "Cargo" : "직함"
-                        case "company":
-                          return isPT ? "Empresa" : "회사"
-                        case "location":
-                          return isPT ? "Localização" : "위치"
-                        case "website":
-                          return isPT ? "Website" : "웹사이트"
-                        default:
-                          return key
-                      }
-                    }).join(", ") || (isPT ? "Nenhuma" : "없음")}
+                    {isPT ? CONTACT_PT_TEXT.qrIncludedLabel : "포함된 정보: "}
+                    {contactInfo.qrContent &&
+                    (contactInfo.qrContent as any).length > 0
+                      ? (contactInfo.qrContent as any as string[])
+                          .map((key) => {
+                            switch (key) {
+                              case "name":
+                                return isPT ? "Nome" : "이름"
+                              case "phone":
+                                return isPT ? "Telefone" : "전화번호"
+                              case "email":
+                                return isPT ? "E-mail" : "이메일"
+                              case "title":
+                                return isPT ? "Cargo" : "직함"
+                              case "company":
+                                return isPT ? "Empresa" : "회사"
+                              case "location":
+                                return isPT ? "Localização" : "위치"
+                              case "website":
+                                return isPT ? "Website" : "웹사이트"
+                              default:
+                                return key
+                            }
+                          })
+                          .join(", ")
+                      : isPT
+                      ? "Nenhuma"
+                      : "없음"}
                   </p>
                 </div>
               </Card>
@@ -657,6 +642,7 @@ export function Contact() {
               </button>
             </div>
 
+            {/* 기본 정보 */}
             <div className="space-y-4 mb-6">
               <h4 className="font-medium">기본 정보</h4>
               <div className="grid grid-cols-2 gap-4">
@@ -733,6 +719,7 @@ export function Contact() {
               </div>
             </div>
 
+            {/* 연락처 정보 */}
             <div className="space-y-4 mb-6">
               <h4 className="font-medium">연락처</h4>
               <div className="grid grid-cols-2 gap-4">
@@ -848,8 +835,7 @@ export function Contact() {
             <div className="space-y-3">
               {socialLinks.map((link, index) => {
                 const Icon =
-                  AVAILABLE_ICONS[link.icon as keyof typeof AVAILABLE_ICONS] ||
-                  Globe
+                  AVAILABLE_ICONS[link.icon as keyof typeof AVAILABLE_ICONS] || Globe
 
                 return (
                   <div
@@ -958,8 +944,8 @@ export function Contact() {
 
             <div className="mt-6 pt-4 border-t">
               <p className="text-sm text-muted-foreground mb-4">
-                💡 팁: 플랫폼 이름을 입력하고, 아이콘을 선택한 후 URL을
-                입력하세요. 빈 URL은 표시되지 않습니다.
+                💡 팁: 플랫폼 이름을 입력하고, 아이콘을 선택한 후 URL을 입력하세요.
+                빈 URL은 표시되지 않습니다.
               </p>
               <div className="flex gap-2">
                 <button
@@ -1027,13 +1013,21 @@ export function Contact() {
                   <label key={key} className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      checked={contactInfo.qrContent?.includes(key) || false}
+                      checked={
+                        contactInfo.qrContent &&
+                        (contactInfo.qrContent as any as string[]).includes(key)
+                      }
                       onChange={(e) => {
-                        const currentContent = contactInfo.qrContent || []
+                        const currentContent =
+                          (contactInfo.qrContent as any as string[]) || []
                         const newContent = e.target.checked
                           ? [...currentContent, key]
                           : currentContent.filter((item) => item !== key)
-                        updateContactInfo("qrContent", newContent)
+                        // 타입 우회
+                        updateContactInfo(
+                          "qrContent",
+                          newContent as unknown as string,
+                        )
                       }}
                       className="rounded"
                     />
