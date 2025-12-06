@@ -92,34 +92,57 @@ const SKILL_ICONS = {
   users: Users,
 }
 
+// 언어 타입 및 포르투갈어 텍스트
+type AboutLang = "ko" | "pt"
+
+const ABOUT_PT_TEXT = {
+  title: "Sobre mim",
+  subtitle:
+    "Estudo português, Brasil e cidades, conectando língua, espaço urbano e mercado imobiliário no meu percurso acadêmico.",
+  storyTitle: "Minha trajetória",
+  story: [
+    "Comecei estudando língua, cultura e modos de vida no curso de Português e Estudos Brasileiros.",
+    "Mas, à medida que observava o cotidiano das cidades e das moradias, percebi que só a linguagem não explicava todos os problemas urbanos e de habitação que eu via.",
+    "Por isso, entrei na área de estudos imobiliários, buscando uma outra 'língua' para entender a estrutura das cidades. No início, os termos técnicos eram estranhos, mas esse processo mudou a forma como eu olho para o espaço urbano.",
+    "Ainda tenho muito a aprender. Não entendo todos os mecanismos do mercado imobiliário nem explico a cidade por completo. Mas foi justamente essa falta que me fez observar com mais cuidado, fazer mais perguntas e ler, camada por camada, como a cidade realmente funciona.",
+  ],
+  skillsSectionTitle: "Competências principais",
+  hobbiesSectionTitle: "Hobbies & interesses",
+} as const
+
 export function About() {
   const { getData, saveData, isEditMode, saveToFile } = useInlineEditor()
+
+  // 표시 언어
+  const [lang, setLang] = useState<AboutLang>("ko")
+  const isPT = !isEditMode && lang === "pt"
+
   // 기본 데이터
-    const defaultInfo = {
+  const defaultInfo = {
     title: "소개",
     subtitle: "당신의 전문성과 열정을 소개해주세요.",
     background: { image: "", video: "", color: "", opacity: 0.1 },
     experienceCards: [
-      { icon: "briefcase", title: "단국대학교", period: "2023.03~2027.02 예정", description: " " },
-      { icon: "graduation", title: "포르투갈 교환학생", period: "2024.02~07", description: "University of Coimbra" },
-      { icon: "award", title: "투자자산운용사", period: "2025 43회", description: " " },
-      { icon: "award", title: "FLEX(Foreign Language EXamination)", period: "2023-2", description: " " },
+      { icon: "briefcase", title: "단국대학교", period: "2023.03 ~ 2027.02 (예정)", description: "포르투갈·브라질학 전공" },
+      { icon: "graduation", title: "포르투갈 교환학생", period: "2024.02 ~ 2024.07", description: "University of Coimbra" },
+      { icon: "award", title: "투자자산운용사", period: "2025년 제43회 합격", description: "" },
+      { icon: "award", title: "FLEX (Foreign Language EXamination)", period: "2023-2", description: "" },
     ],
     skills: [
       {
         icon: "globe",
         title: "국제적 관점의 도시·부동산 연구",
-        description: "다양한 국가의 도시 구조·주거 문제 비교 분석",
+        description: "브라질·유럽 등 다양한 국가의 도시 구조와 주거 문제를 비교·분석합니다.",
       },
       {
         icon: "search",
         title: "부동산 및 도시 정책 이해",
-        description: "주거·재생·개발·인프라 등 부동산 구조와 도시 문제 연구",
+        description: "주거, 재생, 개발, 인프라 등 도시를 둘러싼 구조와 정책의 영향을 함께 살펴봅니다.",
       },
       {
         icon: "lightbulb",
         title: "지역 전문성",
-        description: "브라질 현지 정책,도시 문제,시장 자료 해석 능력",
+        description: "브라질 현지 정책, 도시 문제, 시장 자료를 포르투갈어 기반으로 해석·정리합니다.",
       },
     ],
     storyTitle: "나의 이야기",
@@ -133,98 +156,128 @@ export function About() {
     hobbies: ["✈️ 여행"],
   }
 
-  
   const [aboutInfo, setAboutInfo] = useState(defaultInfo)
-  const [backgroundData, setBackgroundData] = useState(
-    defaultInfo.background
-  )
+  const [backgroundData, setBackgroundData] = useState(defaultInfo.background)
   const [showCareerModal, setShowCareerModal] = useState(false)
   const [showSkillModal, setShowSkillModal] = useState(false)
   const [showHobbyModal, setShowHobbyModal] = useState(false)
-  
+
   // localStorage에서 데이터 로드 - 편집 모드가 변경될 때마다 실행
   useEffect(() => {
-    const savedData = getData('about-info') as typeof defaultInfo | null
+    const savedData = getData("about-info") as typeof defaultInfo | null
     if (savedData) {
       setAboutInfo({ ...defaultInfo, ...savedData })
-      // background 데이터가 있으면 설정
       if (savedData.background) {
         setBackgroundData(savedData.background)
       }
     }
-    
-    const savedBg = getData('about-background') as { image: string; video: string; color: string; opacity: number } | null
+
+    const savedBg = getData("about-background") as {
+      image: string
+      video: string
+      color: string
+      opacity: number
+    } | null
     if (savedBg) {
       setBackgroundData(savedBg)
     }
-  }, [isEditMode]) // isEditMode가 변경될 때마다 데이터 다시 로드
-  
-  const updateAboutInfo = (key: string, value: string | boolean | typeof aboutInfo.skills | typeof aboutInfo.experienceCards | typeof aboutInfo.story | typeof aboutInfo.hobbies | number) => {
+  }, [getData, isEditMode]) // isEditMode가 변경될 때마다 데이터 다시 로드
+
+  const updateAboutInfo = (
+    key: string,
+    value:
+      | string
+      | boolean
+      | typeof aboutInfo.skills
+      | typeof aboutInfo.experienceCards
+      | typeof aboutInfo.story
+      | typeof aboutInfo.hobbies
+      | number
+  ) => {
     const newInfo = { ...aboutInfo, [key]: value }
     setAboutInfo(newInfo)
-    saveData('about-info', newInfo)
+    saveData("about-info", newInfo)
   }
-  
+
   const updateExperienceCard = (index: number, field: string, value: string) => {
     const newCards = [...aboutInfo.experienceCards]
     newCards[index] = { ...newCards[index], [field]: value }
-    updateAboutInfo('experienceCards', newCards)
+    updateAboutInfo("experienceCards", newCards)
   }
-  
+
   const addExperienceCard = () => {
-    updateAboutInfo('experienceCards', [...aboutInfo.experienceCards, { 
-      icon: "briefcase", 
-      title: "새 경험", 
-      period: "2024", 
-      description: "설명을 입력하세요" 
-    }])
+    updateAboutInfo("experienceCards", [
+      ...aboutInfo.experienceCards,
+      {
+        icon: "briefcase",
+        title: "새 경험",
+        period: "2024",
+        description: "설명을 입력하세요",
+      },
+    ])
   }
-  
+
   const removeExperienceCard = (index: number) => {
-    updateAboutInfo('experienceCards', aboutInfo.experienceCards.filter((_, i) => i !== index))
+    updateAboutInfo(
+      "experienceCards",
+      aboutInfo.experienceCards.filter((_, i) => i !== index)
+    )
   }
-  
+
   const updateSkill = (index: number, field: string, value: string) => {
     const newSkills = [...aboutInfo.skills]
     newSkills[index] = { ...newSkills[index], [field]: value }
-    updateAboutInfo('skills', newSkills)
+    updateAboutInfo("skills", newSkills)
   }
-  
+
   const addSkill = () => {
-    updateAboutInfo('skills', [...aboutInfo.skills, { icon: "star", title: "새 스킬", description: "스킬 설명" }])
+    updateAboutInfo("skills", [
+      ...aboutInfo.skills,
+      { icon: "star", title: "새 스킬", description: "스킬 설명" },
+    ])
   }
-  
+
   const removeSkill = (index: number) => {
-    updateAboutInfo('skills', aboutInfo.skills.filter((_, i) => i !== index))
+    updateAboutInfo(
+      "skills",
+      aboutInfo.skills.filter((_, i) => i !== index)
+    )
   }
-  
+
   const updateStory = (index: number, value: string) => {
     const newStory = [...aboutInfo.story]
     newStory[index] = value
-    updateAboutInfo('story', newStory)
+    updateAboutInfo("story", newStory)
   }
-  
+
   const addStory = () => {
-    updateAboutInfo('story', [...aboutInfo.story, "새로운 문단"])
+    updateAboutInfo("story", [...aboutInfo.story, "새로운 문단"])
   }
-  
+
   const removeStory = (index: number) => {
-    updateAboutInfo('story', aboutInfo.story.filter((_, i) => i !== index))
+    updateAboutInfo(
+      "story",
+      aboutInfo.story.filter((_, i) => i !== index)
+    )
   }
-  
+
   const updateHobby = (index: number, value: string) => {
     const newHobbies = [...aboutInfo.hobbies]
     newHobbies[index] = value
-    updateAboutInfo('hobbies', newHobbies)
+    updateAboutInfo("hobbies", newHobbies)
   }
-  
+
   const addHobby = () => {
-    updateAboutInfo('hobbies', [...aboutInfo.hobbies, "🎯 새 취미"])
+    updateAboutInfo("hobbies", [...aboutInfo.hobbies, "🎯 새 취미"])
   }
-  
+
   const removeHobby = (index: number) => {
-    updateAboutInfo('hobbies', aboutInfo.hobbies.filter((_, i) => i !== index))
+    updateAboutInfo(
+      "hobbies",
+      aboutInfo.hobbies.filter((_, i) => i !== index)
+    )
   }
+
   return (
     <EditableBackground
       image={backgroundData.image}
@@ -234,31 +287,50 @@ export function About() {
       onChange={(data) => {
         const newData = { ...backgroundData, ...data }
         setBackgroundData(newData)
-        saveData('about-background', newData)
-        
+        saveData("about-background", newData)
+
         // aboutInfo도 업데이트 (파일 저장을 위해)
         const updatedAboutInfo = { ...aboutInfo, background: newData }
         setAboutInfo(updatedAboutInfo)
-        saveData('about-info', updatedAboutInfo)
+        saveData("about-info", updatedAboutInfo)
       }}
       storageKey="about-background"
       className="py-20 bg-muted/30 relative"
     >
       <section id="about" className="w-full">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          {/* 언어 토글 */}
+          <div className="flex justify-center gap-3 mb-4 text-sm text-muted-foreground">
+            <button
+              type="button"
+              onClick={() => setLang("ko")}
+              className={lang === "ko" ? "font-semibold underline" : "opacity-60 hover:opacity-100"}
+            >
+              한국어
+            </button>
+            <span>/</span>
+            <button
+              type="button"
+              onClick={() => setLang("pt")}
+              className={lang === "pt" ? "font-semibold underline" : "opacity-60 hover:opacity-100"}
+            >
+              Português
+            </button>
+          </div>
+
           {/* 섹션 제목 */}
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
               <EditableText
-                value={aboutInfo.title}
-                onChange={(value) => updateAboutInfo('title', value)}
+                value={isPT ? ABOUT_PT_TEXT.title : aboutInfo.title}
+                onChange={(value) => updateAboutInfo("title", value)}
                 storageKey="about-title"
               />
             </h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
               <EditableText
-                value={aboutInfo.subtitle}
-                onChange={(value) => updateAboutInfo('subtitle', value)}
+                value={isPT ? ABOUT_PT_TEXT.subtitle : aboutInfo.subtitle}
+                onChange={(value) => updateAboutInfo("subtitle", value)}
                 storageKey="about-subtitle"
                 multiline
               />
@@ -271,7 +343,10 @@ export function About() {
             {aboutInfo.experienceCards?.map((card, index) => {
               const Icon = AVAILABLE_ICONS[card.icon as keyof typeof AVAILABLE_ICONS] || Briefcase
               return (
-                <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 relative">
+                <Card
+                  key={index}
+                  className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 relative"
+                >
                   <CardContent className="p-6">
                     {isEditMode && (
                       <button
@@ -289,21 +364,23 @@ export function About() {
                         <h3 className="font-semibold text-foreground mb-1">
                           <EditableText
                             value={card.title}
-                            onChange={(value) => updateExperienceCard(index, 'title', value)}
+                            onChange={(value) => updateExperienceCard(index, "title", value)}
                             storageKey={`about-experience-${index}-title`}
                           />
                         </h3>
                         <p className="text-sm text-primary mb-2">
                           <EditableText
                             value={card.period}
-                            onChange={(value) => updateExperienceCard(index, 'period', value)}
+                            onChange={(value) => updateExperienceCard(index, "period", value)}
                             storageKey={`about-experience-${index}-period`}
                           />
                         </p>
                         <p className="text-sm text-muted-foreground">
                           <EditableText
                             value={card.description}
-                            onChange={(value) => updateExperienceCard(index, 'description', value)}
+                            onChange={(value) =>
+                              updateExperienceCard(index, "description", value)
+                            }
                             storageKey={`about-experience-${index}-description`}
                           />
                         </p>
@@ -313,11 +390,13 @@ export function About() {
                 </Card>
               )
             })}
-            
+
             {/* 추가 버튼 */}
             {isEditMode && (
-              <Card className="border-2 border-dashed border-muted-foreground/30 shadow-none hover:border-primary transition-all cursor-pointer"
-                    onClick={() => setShowCareerModal(true)}>
+              <Card
+                className="border-2 border-dashed border-muted-foreground/30 shadow-none hover:border-primary transition-all cursor-pointer"
+                onClick={() => setShowCareerModal(true)}
+              >
                 <CardContent className="p-6 flex items-center justify-center">
                   <div className="text-center">
                     <Settings className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
@@ -332,7 +411,7 @@ export function About() {
           {(aboutInfo.skills.length > 0 || isEditMode) && (
             <div className="mb-16">
               <h3 className="text-2xl font-bold text-foreground mb-8 text-center">
-                핵심 역량
+                {isPT ? ABOUT_PT_TEXT.skillsSectionTitle : "핵심 역량"}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {aboutInfo.skills.map((skill, index) => {
@@ -353,14 +432,16 @@ export function About() {
                       <h4 className="font-semibold text-foreground mb-2">
                         <EditableText
                           value={skill.title}
-                          onChange={(value) => updateSkill(index, 'title', value)}
+                          onChange={(value) => updateSkill(index, "title", value)}
                           storageKey={`about-skill-${index}-title`}
                         />
                       </h4>
                       <p className="text-sm text-muted-foreground">
                         <EditableText
                           value={skill.description}
-                          onChange={(value) => updateSkill(index, 'description', value)}
+                          onChange={(value) =>
+                            updateSkill(index, "description", value)
+                          }
                           storageKey={`about-skill-${index}-description`}
                           multiline
                         />
@@ -369,7 +450,7 @@ export function About() {
                   )
                 })}
                 {isEditMode && (
-                  <div 
+                  <div
                     className="text-center border-2 border-dashed border-muted-foreground/30 rounded-lg p-6 flex items-center justify-center cursor-pointer hover:border-primary transition-all"
                     onClick={() => setShowSkillModal(true)}
                   >
@@ -390,31 +471,37 @@ export function About() {
                 <div className="p-8">
                   <h3 className="text-2xl font-bold text-foreground mb-4">
                     <EditableText
-                      value={aboutInfo.storyTitle}
-                      onChange={(value) => updateAboutInfo('storyTitle', value)}
+                      value={isPT ? ABOUT_PT_TEXT.storyTitle : aboutInfo.storyTitle}
+                      onChange={(value) => updateAboutInfo("storyTitle", value)}
                       storageKey="about-storyTitle"
                     />
                   </h3>
-                  {aboutInfo.story.map((paragraph, index) => (
-                    <div key={index} className="relative mb-4">
-                      {isEditMode && (
-                        <button
-                          onClick={() => removeStory(index)}
-                          className={COMMON_STYLES.deleteButton}
-                        >
-                          <X className={COMMON_STYLES.deleteIcon} />
-                        </button>
-                      )}
-                      <p className="text-muted-foreground leading-relaxed">
-                        <EditableText
-                          value={paragraph}
-                          onChange={(value) => updateStory(index, value)}
-                          storageKey={`about-story-${index}`}
-                          multiline
-                        />
-                      </p>
-                    </div>
-                  ))}
+                  {aboutInfo.story.map((paragraph, index) => {
+                    const displayText =
+                      isPT && ABOUT_PT_TEXT.story[index]
+                        ? ABOUT_PT_TEXT.story[index]
+                        : paragraph
+                    return (
+                      <div key={index} className="relative mb-4">
+                        {isEditMode && (
+                          <button
+                            onClick={() => removeStory(index)}
+                            className={COMMON_STYLES.deleteButton}
+                          >
+                            <X className={COMMON_STYLES.deleteIcon} />
+                          </button>
+                        )}
+                        <p className="text-muted-foreground leading-relaxed">
+                          <EditableText
+                            value={displayText}
+                            onChange={(value) => updateStory(index, value)}
+                            storageKey={`about-story-${index}`}
+                            multiline
+                          />
+                        </p>
+                      </div>
+                    )
+                  })}
                   {isEditMode && (
                     <button
                       onClick={addStory}
@@ -425,12 +512,12 @@ export function About() {
                     </button>
                   )}
                 </div>
-                
+
                 {/* 이미지 영역 */}
                 <div className="relative w-full h-full min-h-[500px] lg:min-h-full">
                   <EditableMedia
                     src={aboutInfo.storyImage}
-                    onChange={(src) => updateAboutInfo('storyImage', src)}
+                    onChange={(src) => updateAboutInfo("storyImage", src)}
                     type="image"
                     storageKey="about-storyImage"
                     className="w-full h-full object-cover"
@@ -446,11 +533,14 @@ export function About() {
           {(aboutInfo.hobbies.length > 0 || isEditMode) && (
             <div className="mt-16 text-center">
               <h3 className="text-2xl font-bold text-foreground mb-8">
-                취미 & 관심사
+                {isPT ? ABOUT_PT_TEXT.hobbiesSectionTitle : "취미 & 관심사"}
               </h3>
               <div className="flex flex-wrap justify-center gap-3">
                 {aboutInfo.hobbies.map((hobby, index) => (
-                  <span key={index} className="px-4 py-2 bg-primary/10 text-primary rounded-full text-sm relative group flex items-center justify-center">
+                  <span
+                    key={index}
+                    className="px-4 py-2 bg-primary/10 text-primary rounded-full text-sm relative group flex items-center justify-center"
+                  >
                     {isEditMode && (
                       <button
                         onClick={() => removeHobby(index)}
@@ -480,7 +570,7 @@ export function About() {
           )}
         </div>
       </section>
-      
+
       {/* 경험 카드 편집 모달 */}
       {showCareerModal && isEditMode && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
@@ -494,16 +584,19 @@ export function About() {
                 <X className="h-5 w-5" />
               </button>
             </div>
-            
+
             <div className="space-y-3">
               {aboutInfo.experienceCards?.map((card, index) => {
                 const Icon = AVAILABLE_ICONS[card.icon as keyof typeof AVAILABLE_ICONS] || Briefcase
                 return (
-                  <div key={index} className="flex items-start gap-3 p-3 border rounded-lg bg-muted/30">
+                  <div
+                    key={index}
+                    className="flex items-start gap-3 p-3 border rounded-lg bg-muted/30"
+                  >
                     {/* 아이콘 선택 */}
                     <select
                       value={card.icon}
-                      onChange={(e) => updateExperienceCard(index, 'icon', e.target.value)}
+                      onChange={(e) => updateExperienceCard(index, "icon", e.target.value)}
                       className="w-40 px-2 py-2 border rounded-lg bg-background"
                     >
                       <option value="briefcase">💼 직장</option>
@@ -522,35 +615,37 @@ export function About() {
                       <option value="coffee">☕ 일상</option>
                       <option value="user">👤 개인</option>
                     </select>
-                    
+
                     <div className="flex-1 space-y-2">
                       <input
                         type="text"
                         value={card.title}
-                        onChange={(e) => updateExperienceCard(index, 'title', e.target.value)}
-                        placeholder="예: ABC 회사, 서울대학교, 구글 자격증"
+                        onChange={(e) => updateExperienceCard(index, "title", e.target.value)}
+                        placeholder="예: ABC 회사, 단국대학교, 자격증 이름"
                         className="w-full px-3 py-2 border rounded-lg bg-background font-semibold"
                       />
-                      
+
                       <div className="flex gap-2">
                         <input
                           type="text"
                           value={card.period}
-                          onChange={(e) => updateExperienceCard(index, 'period', e.target.value)}
+                          onChange={(e) => updateExperienceCard(index, "period", e.target.value)}
                           placeholder="예: 2020 - 현재"
                           className="flex-1 px-3 py-2 border rounded-lg bg-background"
                         />
-                        
+
                         <input
                           type="text"
                           value={card.description}
-                          onChange={(e) => updateExperienceCard(index, 'description', e.target.value)}
-                          placeholder="예: 마케팅 매니저, 경영학 학사, GAIQ 인증"
+                          onChange={(e) =>
+                            updateExperienceCard(index, "description", e.target.value)
+                          }
+                          placeholder="예: 전공, 직무, 수상 내용 등"
                           className="flex-1 px-3 py-2 border rounded-lg bg-background"
                         />
                       </div>
                     </div>
-                    
+
                     <button
                       onClick={() => removeExperienceCard(index)}
                       className="p-2 text-destructive hover:bg-destructive/10 rounded-lg"
@@ -560,7 +655,7 @@ export function About() {
                   </div>
                 )
               })}
-              
+
               <button
                 onClick={addExperienceCard}
                 className="w-full py-3 border-2 border-dashed rounded-lg hover:border-primary hover:bg-primary/5 transition-all"
@@ -569,7 +664,7 @@ export function About() {
                 카드 추가
               </button>
             </div>
-            
+
             <div className="mt-6 pt-4 border-t">
               <div className="flex gap-2">
                 <button
@@ -580,12 +675,12 @@ export function About() {
                 </button>
                 <button
                   onClick={async () => {
-                    const success = await saveToFile('about', 'Info', aboutInfo)
+                    const success = await saveToFile("about", "Info", aboutInfo)
                     if (success) {
-                      alert('✅ 소개 설정이 파일에 저장되었습니다!')
+                      alert("✅ 소개 설정이 파일에 저장되었습니다!")
                       setShowCareerModal(false)
                     } else {
-                      alert('❌ 파일 저장에 실패했습니다.')
+                      alert("❌ 파일 저장에 실패했습니다.")
                     }
                   }}
                   className="flex-1 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 font-medium"
@@ -597,7 +692,7 @@ export function About() {
           </div>
         </div>
       )}
-      
+
       {/* 스킬 편집 모달 */}
       {showSkillModal && isEditMode && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[2147483647]">
@@ -611,12 +706,15 @@ export function About() {
                 <X className="h-5 w-5" />
               </button>
             </div>
-            
+
             <div className="space-y-3">
               {aboutInfo.skills.map((skill, index) => {
                 const Icon = SKILL_ICONS[skill.icon as keyof typeof SKILL_ICONS] || Trophy
                 return (
-                  <div key={index} className="flex items-start gap-3 p-3 border rounded-lg bg-muted/30">
+                  <div
+                    key={index}
+                    className="flex items-start gap-3 p-3 border rounded-lg bg-muted/30"
+                  >
                     {/* 아이콘 선택 */}
                     <div className="flex flex-col items-center gap-2">
                       <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
@@ -624,7 +722,7 @@ export function About() {
                       </div>
                       <select
                         value={skill.icon}
-                        onChange={(e) => updateSkill(index, 'icon', e.target.value)}
+                        onChange={(e) => updateSkill(index, "icon", e.target.value)}
                         className="w-32 px-2 py-1 text-xs border rounded-lg bg-background"
                       >
                         <optgroup label="기술 스킬">
@@ -666,25 +764,27 @@ export function About() {
                         </optgroup>
                       </select>
                     </div>
-                    
+
                     <div className="flex-1 space-y-2">
                       <input
                         type="text"
                         value={skill.title}
-                        onChange={(e) => updateSkill(index, 'title', e.target.value)}
+                        onChange={(e) => updateSkill(index, "title", e.target.value)}
                         placeholder="예: 프론트엔드 개발, 데이터 분석, 프로젝트 관리"
                         className="w-full px-3 py-2 border rounded-lg bg-background font-semibold"
                       />
-                      
+
                       <textarea
                         value={skill.description}
-                        onChange={(e) => updateSkill(index, 'description', e.target.value)}
+                        onChange={(e) =>
+                          updateSkill(index, "description", e.target.value)
+                        }
                         placeholder="예: React와 TypeScript를 활용한 모던 웹 애플리케이션 개발"
                         className="w-full px-3 py-2 border rounded-lg bg-background resize-none"
                         rows={2}
                       />
                     </div>
-                    
+
                     <button
                       onClick={() => removeSkill(index)}
                       className="p-2 text-destructive hover:bg-destructive/10 rounded-lg"
@@ -694,7 +794,7 @@ export function About() {
                   </div>
                 )
               })}
-              
+
               <button
                 onClick={addSkill}
                 className="w-full py-3 border-2 border-dashed rounded-lg hover:border-primary hover:bg-primary/5 transition-all"
@@ -703,7 +803,7 @@ export function About() {
                 스킬 추가
               </button>
             </div>
-            
+
             <div className="mt-6 pt-4 border-t">
               <p className="text-sm text-muted-foreground mb-4">
                 💡 팁: 아이콘을 선택하고 제목과 설명을 입력하세요. 필요한 만큼 자유롭게 추가할 수 있습니다.
@@ -717,12 +817,12 @@ export function About() {
                 </button>
                 <button
                   onClick={async () => {
-                    const success = await saveToFile('about', 'Info', aboutInfo)
+                    const success = await saveToFile("about", "Info", aboutInfo)
                     if (success) {
-                      alert('✅ 소개 설정이 파일에 저장되었습니다!')
+                      alert("✅ 소개 설정이 파일에 저장되었습니다!")
                       setShowSkillModal(false)
                     } else {
-                      alert('❌ 파일 저장에 실패했습니다.')
+                      alert("❌ 파일 저장에 실패했습니다.")
                     }
                   }}
                   className="flex-1 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 font-medium"
@@ -734,7 +834,7 @@ export function About() {
           </div>
         </div>
       )}
-      
+
       {/* 취미 편집 모달 */}
       {showHobbyModal && isEditMode && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[2147483647]">
@@ -748,7 +848,7 @@ export function About() {
                 <X className="h-5 w-5" />
               </button>
             </div>
-            
+
             <div className="space-y-3">
               {aboutInfo.hobbies.map((hobby, index) => (
                 <div key={index} className="flex items-center gap-3 p-3 border rounded-lg">
@@ -759,7 +859,7 @@ export function About() {
                     placeholder="예: 📚 독서"
                     className="flex-1 px-3 py-2 border rounded-lg bg-background"
                   />
-                  
+
                   <button
                     onClick={() => removeHobby(index)}
                     className="p-2 text-destructive hover:bg-destructive/10 rounded-lg"
@@ -768,7 +868,7 @@ export function About() {
                   </button>
                 </div>
               ))}
-              
+
               <button
                 onClick={addHobby}
                 className="w-full py-3 border-2 border-dashed rounded-lg hover:border-primary hover:bg-primary/5 transition-all"
@@ -777,18 +877,39 @@ export function About() {
                 취미 추가
               </button>
             </div>
-            
+
             <div className="mt-6 pt-4 border-t">
               <div className="mb-4">
                 <p className="text-sm font-medium mb-2">🎯 취미 예시:</p>
                 <div className="flex flex-wrap gap-2">
-                  {['📚 독서', '☕ 카페 투어', '🎨 전시회 관람', '✈️ 여행', '🏃 러닝', '📸 사진', '🎮 게임', '🎬 영화 감상', '🎵 음악 감상', '🍳 요리', '🌱 가드닝', '🏊 수영', '🧘 요가', '🎸 기타 연주', '✍️ 글쓰기', '🏕️ 캠핑', '🎭 연극 관람', '🎪 공연 관람', '🚴 자전거', '⛷️ 스키'].map((example) => (
+                  {[
+                    "📚 독서",
+                    "☕ 카페 투어",
+                    "🎨 전시회 관람",
+                    "✈️ 여행",
+                    "🏃 러닝",
+                    "📸 사진",
+                    "🎮 게임",
+                    "🎬 영화 감상",
+                    "🎵 음악 감상",
+                    "🍳 요리",
+                    "🌱 가드닝",
+                    "🏊 수영",
+                    "🧘 요가",
+                    "🎸 기타 연주",
+                    "✍️ 글쓰기",
+                    "🏕️ 캠핑",
+                    "🎭 연극 관람",
+                    "🎪 공연 관람",
+                    "🚴 자전거",
+                    "⛷️ 스키",
+                  ].map((example) => (
                     <button
                       key={example}
                       className="px-3 py-1 text-sm bg-muted hover:bg-primary/10 rounded-full transition-all"
                       onClick={() => {
                         if (!aboutInfo.hobbies.includes(example)) {
-                          updateAboutInfo('hobbies', [...aboutInfo.hobbies, example])
+                          updateAboutInfo("hobbies", [...aboutInfo.hobbies, example])
                         }
                       }}
                     >
@@ -809,12 +930,12 @@ export function About() {
                 </button>
                 <button
                   onClick={async () => {
-                    const success = await saveToFile('about', 'Info', aboutInfo)
+                    const success = await saveToFile("about", "Info", aboutInfo)
                     if (success) {
-                      alert('✅ 소개 설정이 파일에 저장되었습니다!')
+                      alert("✅ 소개 설정이 파일에 저장되었습니다!")
                       setShowHobbyModal(false)
                     } else {
-                      alert('❌ 파일 저장에 실패했습니다.')
+                      alert("❌ 파일 저장에 실패했습니다.")
                     }
                   }}
                   className="flex-1 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 font-medium"
