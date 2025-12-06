@@ -41,7 +41,7 @@ export function Contact() {
     phone: "010-8645-9305",
     email: "jisoo9305@gmal.com",
     website: "",
-    location: "당신의 위치",
+    location: "경기도 성남시",
     workTime: "평일 09:00 - 18:00",
     responseTime: "24시간 이내 응답",
     sectionTitle: "연락처",
