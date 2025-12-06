@@ -34,7 +34,7 @@ type HeroLang = "ko" | "pt"
 
 const HERO_PT_TEXT = {
   greeting: "Departamento de Português e Estudos Brasileiros da Universidade Dankook",
-  name: "Yoo Jisoo",
+  name: "Yu Jisu",
   title: "Leio os fluxos das cidades do mundo e planejo os espaços do futuro.",
   description:
     "Estudante de português-brasileiro e pesquisa urbana, com interesse em habitação social, favelas e políticas de cidade.",
