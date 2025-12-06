@@ -13,11 +13,11 @@ type SiteLang = "ko" | "pt"
 
 /**
  * 전역 언어 상태 훅
- * - 초기값: localStorage("site-lang") 있으면 그 값, 없으면 "ko"
- * - Hero에서 lang을 토글하면:
- *   - localStorage에 저장
- *   - window에 "site-lang-change" 이벤트 발행
- * - 다른 섹션(About, Projects 등)은 이 이벤트만 구독해서 따라가면 됨
+ * - localStorage("site-lang") 우선
+ * - setLanguage("ko" | "pt") 호출 시:
+ *    1) 내부 state 업데이트 → 화면 즉시 재렌더
+ *    2) localStorage 저장
+ *    3) window에 "site-lang-change" 이벤트 발행
  */
 function useSiteLangInHero(initial: SiteLang = "ko") {
   const [lang, setLang] = useState<SiteLang>(initial)
@@ -25,19 +25,14 @@ function useSiteLangInHero(initial: SiteLang = "ko") {
   useEffect(() => {
     if (typeof window === "undefined") return
 
-    // 처음 로딩 시 localStorage 값 반영
     const stored = window.localStorage.getItem("site-lang")
     if (stored === "ko" || stored === "pt") {
       setLang(stored)
     }
-
-    return
   }, [])
 
-  const toggleLang = () => {
-    const next: SiteLang = lang === "ko" ? "pt" : "ko"
+  const setLanguage = (next: SiteLang) => {
     setLang(next)
-
     if (typeof window !== "undefined") {
       window.localStorage.setItem("site-lang", next)
       window.dispatchEvent(
@@ -48,7 +43,7 @@ function useSiteLangInHero(initial: SiteLang = "ko") {
     }
   }
 
-  return { lang, toggleLang }
+  return { lang, setLanguage }
 }
 
 const defaultSocialLinks = [
@@ -89,8 +84,8 @@ const AVAILABLE_ICONS = {
 export function Hero() {
   const { getData, saveData, isEditMode } = useInlineEditor()
 
-  // 전역 언어 상태 (Hero에서만 토글, 나머지는 구독만)
-  const { lang, toggleLang } = useSiteLangInHero("ko")
+  // 🔹 여기 중요: 이제 setLanguage를 써서 state + 전역 동시에 바꿈
+  const { lang, setLanguage } = useSiteLangInHero("ko")
   const isPT = !isEditMode && lang === "pt"
 
   const [heroInfo, setHeroInfo] = useState(defaultInfo)
@@ -102,7 +97,6 @@ export function Hero() {
     opacity: number
   } | null>(null)
 
-  // 기존 템플릿 데이터 불러오기
   useEffect(() => {
     const savedInfo = getData("hero-info") as typeof defaultInfo | null
     if (savedInfo) {
@@ -237,19 +231,7 @@ export function Hero() {
                 <div className="inline-flex rounded-full border border-border p-1 bg-background/60 backdrop-blur">
                   <button
                     type="button"
-                    onClick={() => {
-                      if (lang !== "ko") {
-                        // 한국어로 전환
-                        if (typeof window !== "undefined") {
-                          window.localStorage.setItem("site-lang", "ko")
-                          window.dispatchEvent(
-                            new CustomEvent("site-lang-change", {
-                              detail: { lang: "ko" as SiteLang },
-                            })
-                          )
-                        }
-                      }
-                    }}
+                    onClick={() => setLanguage("ko")}
                     className={`px-3 py-1 text-xs rounded-full ${
                       lang === "ko"
                         ? "bg-foreground text-background"
@@ -260,18 +242,7 @@ export function Hero() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => {
-                      if (lang !== "pt") {
-                        if (typeof window !== "undefined") {
-                          window.localStorage.setItem("site-lang", "pt")
-                          window.dispatchEvent(
-                            new CustomEvent("site-lang-change", {
-                              detail: { lang: "pt" as SiteLang },
-                            })
-                          )
-                        }
-                      }
-                    }}
+                    onClick={() => setLanguage("pt")}
                     className={`px-3 py-1 text-xs rounded-full ${
                       lang === "pt"
                         ? "bg-foreground text-background"
@@ -346,7 +317,7 @@ export function Hero() {
                 </Button>
               </div>
 
-              {/* 소셜 링크 (GitHub / Email 기본) */}
+              {/* 소셜 링크 */}
               <div className="flex gap-4 flex-wrap items-center">
                 {socialLinks.map((link, index) =>
                   renderSocialIcon(link, index)
