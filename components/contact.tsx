@@ -55,8 +55,9 @@ export function Contact() {
   const [showIconPicker, setShowIconPicker] = useState<number | null>(null)
 
   // 표시 언어 상태
-  const [lang, setLang] = useState<ContactLang>("ko")
-  const isPT = !isEditMode && lang === "pt"
+ const [lang, setLang] = useState<ContactLang>("ko")
+ const isPT = lang === "pt"
+
   
   // 기본 데이터
   const defaultInfo = {
