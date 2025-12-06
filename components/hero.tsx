@@ -29,8 +29,23 @@ const AVAILABLE_ICONS = {
   arrowDown: ArrowDown,
 }
 
+// Hero 섹션 포르투갈어 고정 텍스트
+type HeroLang = "ko" | "pt"
+
+const HERO_PT_TEXT = {
+  greeting: "Departamento de Português e Estudos Brasileiros da Universidade Dankook",
+  name: "Yoo Jisoo",
+  title: "Leio os fluxos das cidades do mundo e planejo os espaços do futuro.",
+  description:
+    "Estudante de português-brasileiro e pesquisa urbana, com interesse em habitação social, favelas e políticas de cidade.",
+  projectButton: "Ver projetos",
+} as const
+
 export function Hero() {
   const { getData, saveData, isEditMode, saveToFile, saveFieldToFile } = useInlineEditor()
+
+  // 현재 표시 언어
+  const [lang, setLang] = useState<HeroLang>("ko")
   
   // 초기 데이터 - 배열 형태로 변경
   const defaultSocialLinks = [{icon: "github", url: "https://github.com/dbwltnwl"}]
@@ -74,7 +89,7 @@ export function Hero() {
   }, [isEditMode]) // isEditMode가 변경될 때마다 데이터 다시 로드
 
   const updateHeroInfo = (key: string, value: string) => {
-    // 업데이트
+    // 업데이트 (항상 한국어 기준으로 저장)
     const newInfo = {
       ...heroInfo,
       [key]: value
@@ -103,16 +118,19 @@ export function Hero() {
     saveData('hero-social-links', newLinks)
   }
 
-const scrollToAbout = () => {
+  const scrollToAbout = () => {
     const aboutSection = document.querySelector("#about");
     if (aboutSection) {
       aboutSection.scrollIntoView({ behavior: "smooth" });
     }
   };
   
-   const scrollToProjects = () => {
-  router.push("/#projects");
-};
+  const scrollToProjects = () => {
+    // 원래 파일에 있던 router 사용 코드는 그대로 두었습니다.
+    // router가 이미 상단에서 선언/import 되어 있다고 가정합니다.
+    // @ts-ignore
+    router.push("/#projects");
+  };
 
   // 소셜 아이콘 렌더링 함수
   const renderSocialIcon = (link: { name: string; icon: string; url: string }, index: number) => {
@@ -136,6 +154,18 @@ const scrollToAbout = () => {
       </a>
     )
   }
+
+  // 언어/모드에 따라 실제로 화면에 보여줄 텍스트 결정
+  const greetingText =
+    !isEditMode && lang === "pt" ? HERO_PT_TEXT.greeting : heroInfo.greeting
+  const nameText =
+    !isEditMode && lang === "pt" ? HERO_PT_TEXT.name : heroInfo.name
+  const titleText =
+    !isEditMode && lang === "pt" ? HERO_PT_TEXT.title : heroInfo.title
+  const descriptionText =
+    !isEditMode && lang === "pt" ? HERO_PT_TEXT.description : heroInfo.description
+  const projectButtonText =
+    !isEditMode && lang === "pt" ? HERO_PT_TEXT.projectButton : heroInfo.projectButton
 
   return (
     <EditableBackground
@@ -170,30 +200,49 @@ const scrollToAbout = () => {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             {/* 왼쪽: 텍스트 내용 */}
             <div className="order-2 md:order-1">
+              {/* 언어 토글 */}
+              <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
+                <button
+                  type="button"
+                  onClick={() => setLang("ko")}
+                  className={lang === "ko" ? "font-semibold underline" : "opacity-60 hover:opacity-100"}
+                >
+                  한국어
+                </button>
+                <span>/</span>
+                <button
+                  type="button"
+                  onClick={() => setLang("pt")}
+                  className={lang === "pt" ? "font-semibold underline" : "opacity-60 hover:opacity-100"}
+                >
+                  Português
+                </button>
+              </div>
+
               <h2 className="text-3xl font-bold mb-2">
                 <EditableText
-                  value={heroInfo.greeting}
+                  value={greetingText}
                   onChange={(value) => updateHeroInfo('greeting', value)}
                   storageKey="hero-greeting"
                 />
               </h2>
               <h1 className="text-5xl md:text-6xl font-bold mb-4">
                 <EditableText
-                  value={heroInfo.name}
+                  value={nameText}
                   onChange={(value) => updateHeroInfo('name', value)}
                   storageKey="hero-name"
                 />
               </h1>
               <p className="text-2xl mb-4 text-muted-foreground">
                 <EditableText
-                  value={heroInfo.title}
+                  value={titleText}
                   onChange={(value) => updateHeroInfo('title', value)}
                   storageKey="hero-title"
                 />
               </p>
               <p className="text-lg mb-8 text-muted-foreground">
                 <EditableText
-                  value={heroInfo.description}
+                  value={descriptionText}
                   onChange={(value) => updateHeroInfo('description', value)}
                   storageKey="hero-description"
                   multiline
@@ -216,9 +265,9 @@ const scrollToAbout = () => {
                     </Button>
                   </div>
                 ) : (
-                  heroInfo.projectButton && (
+                  projectButtonText && (
                     <Button onClick={scrollToProjects} size="lg" className="justify-center">
-                      {heroInfo.projectButton}
+                      {projectButtonText}
                     </Button>
                   )
                 )}
