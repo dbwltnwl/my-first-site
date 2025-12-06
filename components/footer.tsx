@@ -5,9 +5,33 @@ import { useState, useEffect } from "react"
 import { EditableText } from "@/components/editable/editable-text"
 import { useInlineEditor } from "@/contexts/inline-editor-context"
 
+// 언어 타입
+type FooterLang = "ko" | "pt"
+
+// 포르투갈어 텍스트
+const FOOTER_PT_TEXT = {
+  name: "Yu Jisu",
+  description: "Leio os fluxos das cidades globais e planejo os espaços do futuro.",
+  quickLinksTitle: "Links rápidos",
+  contactTitle: "Contato",
+  location: "Seongnam, Província de Gyeonggi, Coreia do Sul",
+}
+
+// 네비게이션 이름 포르투갈어 매핑
+const NAV_PT_MAP: Record<string, string> = {
+  "소개": "Sobre mim",
+  "프로젝트": "Projetos",
+  "연락처": "Contato",
+}
+
 export function Footer() {
   const { getData, saveData, isEditMode, saveToFile } = useInlineEditor()
   const currentYear = new Date().getFullYear()
+
+  // 언어 상태
+  const [lang, setLang] = useState<FooterLang>("ko")
+  // 편집 모드가 아닐 때만 포르투갈어로 표시
+  const isPT = !isEditMode && lang === "pt"
   
   // 헤더의 네비게이션 데이터 가져오기 - 기본값 설정
   const [navItems, setNavItems] = useState<Array<{name: string, url: string}>>([
@@ -36,7 +60,12 @@ export function Footer() {
     showMadeWith: true,
     madeWithLocation: "Mrbaeksang",
     showTemplateCredit: true,
-    templateCreator: {"name":"백상","youtube":"https://www.youtube.com/@Mrbaeksang95/videos","website":"https://devcom.kr/","email":"qortkdgus95@gmail.com"},
+    templateCreator: {
+      name: "백상",
+      youtube: "https://www.youtube.com/@Mrbaeksang95/videos",
+      website: "https://devcom.kr/",
+      email: "qortkdgus95@gmail.com"
+    },
     showScrollTop: true
   }
 
@@ -69,7 +98,7 @@ export function Footer() {
         setNavItems(visibleItems)
       }
     }
-  }, [isEditMode])
+  }, [getData, isEditMode])
 
   const updateFooterInfo = async (key: string, value: string | boolean) => {
     // Made with와 템플릿 크레딧 관련 필드는 수정 불가
@@ -89,9 +118,40 @@ export function Footer() {
     return null
   }
 
+  // 표시용 텍스트 (언어에 따라 결정)
+  const displayName = isPT ? FOOTER_PT_TEXT.name : footerInfo.name
+  const displayDescription = isPT ? FOOTER_PT_TEXT.description : footerInfo.description
+  const displayQuickLinksTitle = isPT ? FOOTER_PT_TEXT.quickLinksTitle : footerInfo.quickLinksTitle
+  const displayContactTitle = isPT ? FOOTER_PT_TEXT.contactTitle : footerInfo.contactTitle
+  const displayLocation = isPT ? FOOTER_PT_TEXT.location : footerInfo.location
+
+  // 카피라이트 기본 문구 (언어별)
+  const fallbackCopyright = isPT
+    ? `© ${currentYear} ${FOOTER_PT_TEXT.name || 'Portfolio'}. Todos os direitos reservados.`
+    : `© ${currentYear} ${footerInfo.name || 'Portfolio'}. All rights reserved.`
+
   return (
     <footer className="bg-muted/30 border-t border-border">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* 언어 토글 */}
+        <div className="flex justify-center mb-6 text-sm text-muted-foreground gap-2">
+          <button
+            type="button"
+            onClick={() => setLang("ko")}
+            className={lang === "ko" ? "font-semibold underline" : "opacity-60 hover:opacity-100"}
+          >
+            한국어
+          </button>
+          <span>/</span>
+          <button
+            type="button"
+            onClick={() => setLang("pt")}
+            className={lang === "pt" ? "font-semibold underline" : "opacity-60 hover:opacity-100"}
+          >
+            Português
+          </button>
+        </div>
+
         {/* 상단 섹션 */}
         {(footerInfo.name || footerInfo.showQuickLinks || footerInfo.showContactInfo) && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
@@ -100,15 +160,15 @@ export function Footer() {
               <div>
                 <h3 className="font-bold text-foreground mb-3">
                   <EditableText
-                    value={footerInfo.name}
+                    value={displayName}
                     onChange={(value) => updateFooterInfo('name', value)}
                     storageKey="footer-name"
                   />
                 </h3>
-                {footerInfo.description && (
+                {displayDescription && (
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     <EditableText
-                      value={footerInfo.description}
+                      value={displayDescription}
                       onChange={(value) => updateFooterInfo('description', value)}
                       storageKey="footer-description"
                       multiline
@@ -123,26 +183,32 @@ export function Footer() {
               <div>
                 <h4 className="font-semibold text-foreground mb-3">
                   <EditableText
-                    value={footerInfo.quickLinksTitle}
+                    value={displayQuickLinksTitle}
                     onChange={(value) => updateFooterInfo('quickLinksTitle', value)}
                     storageKey="footer-quicklinks-title"
                   />
                 </h4>
                 <div className="flex flex-col space-y-2">
-                  {navItems.map((item, index) => (
-                    <button
-                      key={index}
-                      onClick={() => {
-                        const element = document.querySelector(item.url)
-                        if (element) {
-                          element.scrollIntoView({ behavior: "smooth" })
-                        }
-                      }}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors text-left"
-                    >
-                      {item.name}
-                    </button>
-                  ))}
+                  {navItems.map((item, index) => {
+                    const displayNavName = isPT
+                      ? (NAV_PT_MAP[item.name] || item.name)
+                      : item.name
+
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          const element = document.querySelector(item.url)
+                          if (element) {
+                            element.scrollIntoView({ behavior: "smooth" })
+                          }
+                        }}
+                        className="text-sm text-muted-foreground hover:text-foreground transition-colors text-left"
+                      >
+                        {displayNavName}
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
             )}
@@ -152,7 +218,7 @@ export function Footer() {
               <div>
                 <h4 className="font-semibold text-foreground mb-3">
                   <EditableText
-                    value={footerInfo.contactTitle}
+                    value={displayContactTitle}
                     onChange={(value) => updateFooterInfo('contactTitle', value)}
                     storageKey="footer-contact-title"
                   />
@@ -179,7 +245,7 @@ export function Footer() {
                   {footerInfo.location && (
                     <p>
                       <EditableText
-                        value={footerInfo.location}
+                        value={displayLocation}
                         onChange={(value) => updateFooterInfo('location', value)}
                         storageKey="footer-location"
                       />
@@ -196,12 +262,12 @@ export function Footer() {
           <div className="text-sm text-muted-foreground">
             {isEditMode ? (
               <EditableText
-                value={footerInfo.copyright || `© ${currentYear} ${footerInfo.name || 'Portfolio'}. All rights reserved.`}
+                value={footerInfo.copyright || fallbackCopyright}
                 onChange={(value) => updateFooterInfo('copyright', value)}
                 storageKey="footer-copyright"
               />
             ) : (
-              <p>{footerInfo.copyright || `© ${currentYear} ${footerInfo.name || 'Portfolio'}. All rights reserved.`}</p>
+              <p>{footerInfo.copyright || fallbackCopyright}</p>
             )}
           </div>
           
