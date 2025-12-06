@@ -119,7 +119,7 @@ export function About() {
       {
         icon: "lightbulb",
         title: "지역 전문성",
-        description: "브라질 현지 정책, 도시 문제, 시장 자료 해석 능력",
+        description: "브라질 현지 정책,도시 문제,시장 자료 해석 능력",
       },
     ],
     storyTitle: "나의 이야기",
