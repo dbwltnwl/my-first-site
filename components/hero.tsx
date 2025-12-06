@@ -1,234 +1,130 @@
 "use client"
 
-import * as React from "react"
 import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import {
-  ArrowDown,
-  Instagram,
-  MessageCircle,
-  Mail,
-  Youtube,
-  Facebook,
-  Twitter,
-  Globe,
-  Linkedin,
-  Settings,
-  X,
-  Plus,
-  Github,
-  Twitch,
-  Send,
-  MessageSquare,
-} from "lucide-react"
-import { EditableText } from "@/components/editable/editable-text"
-import { EditableMedia } from "@/components/editable/editable-media"
-import { EditableBackground } from "@/components/editable/editable-background"
-import { useInlineEditor } from "@/contexts/inline-editor-context"
 
-// 언어 타입
-type HeroLang = "ko" | "pt"
+type SiteLang = "ko" | "pt"
 
-// 포르투갈어 버전 텍스트
-const HERO_PT_TEXT = {
-  greeting: "Departamento de Estudos Portugueses e Brasileiros — Universidade Dankook",
-  title: "Leio o fluxo das cidades do mundo e imagino os espaços do futuro.",
-  description:
-    "Estudo como pessoas, políticas públicas e mercados se encontram no espaço urbano — especialmente em cidades lusófonas como Lisboa, Porto, São Paulo e Rio de Janeiro.",
-  projectButton: "Ver projetos",
-} as const
-
-// 아이콘 모음
-const AVAILABLE_ICONS = {
-  instagram: Instagram,
-  youtube: Youtube,
-  facebook: Facebook,
-  twitter: Twitter,
-  linkedin: Linkedin,
-  github: Github,
-  discord: MessageSquare,
-  twitch: Twitch,
-  telegram: Send,
-  globe: Globe,
-  message: MessageCircle,
-  mail: Mail,
+const getInitialLang = (): SiteLang => {
+  if (typeof window === "undefined") return "ko"
+  const stored = window.localStorage.getItem("site-lang")
+  return stored === "pt" ? "pt" : "ko"
 }
 
-// ===============================
-//  HERO SECTION START
-// ===============================
-export function Hero() {
-  const { getData, saveData, isEditMode, saveToFile, saveFieldToFile } = useInlineEditor()
+type ProjectItem = {
+  titleKo: string
+  titlePt: string
+  descriptionKo: string
+  descriptionPt: string
+  image: string
+}
 
-  // 🔤 Hero 전용 언어 상태
-  const [lang, setLang] = useState<HeroLang>("ko")
-  const isPT = !isEditMode && lang === "pt"
+const PROJECTS: ProjectItem[] = [
+  {
+    titleKo: "브라질 파벨라 구역의 비공식 부동산 시장: '가격', '위험', '공간'",
+    titlePt:
+      "Mercado imobiliário informal nas favelas brasileiras: ‘preço’, ‘risco’ e ‘espaço’",
+    descriptionKo: `파벨라는 브라질 도시의 비공식 정착지이지만, 내부적으로는 사회적 관계망과 위험 요인이 결합된 독자적인 가격 체계를 가진 시장입니다.
+조사 과정에서 파벨라의 주거 가치는 법적 권리보다 안전성·네트워크·위험 비용이 더 강하게 영향을 미친다는 점을 발견했습니다.
+이는 파벨라가 단순한 빈곤 주거지가 아니라, 공식 시장과는 다른 논리로 작동하는 자생적 부동산 시장임을 보여줍니다.`,
+    descriptionPt: `As favelas são assentamentos informais, mas funcionam como um mercado imobiliário próprio, em que redes sociais e fatores de risco definem a lógica de preços.
+A pesquisa mostrou que o valor habitacional é mais influenciado por segurança, redes locais e custo do risco do que por direitos formais de propriedade.
+Isso revela as favelas não apenas como espaços de pobreza, mas como um mercado imobiliário autônomo, que opera com lógicas distintas do mercado formal.`,
+    image: "/uploads/project_3.png",
+  },
+  {
+    titleKo: "분당 정자동 아파트 지구 노후계획도시",
+    titlePt:
+      "Bairro de apartamentos em Jeongja-dong, Bundang: envelhecimento de uma cidade planejada",
+    descriptionKo: `분당 정자동 아파트 지구의 노후화는 단순한 물리적 노후를 넘어, 초기 계획 도시의 구조적 한계가 표면화된 사례로 볼 수 있습니다.
+조사 과정에서 주거 밀도·동선 체계·커뮤니티 공간의 취약성이 노후화와 함께 더욱 두드러졌으며, 이는 향후 재생 전략에서 기능 개선과 생활권 단위의 재구조화가 핵심 과제로 작용함을 확인했습니다.
+본 분석은 정자동이 더 이상 ‘완성된 계획 도시’가 아니라, 변화된 생활 방식과 도시 수요에 맞춰 다시 설계되어야 하는 재구상(Reconfiguration)의 단계에 있음을 보여줍니다.`,
+    descriptionPt: `O envelhecimento do bairro de apartamentos em Jeongja-dong não é apenas físico; ele expõe limites estruturais de uma cidade planejada em seu estágio inicial.
+A pesquisa identificou que densidade habitacional, circulação e fragilidade dos espaços comunitários tornam-se mais visíveis com o tempo, apontando para a necessidade de reestruturar o bairro em escala de cotidiano.
+A análise sugere que Jeongja-dong deixou de ser uma “cidade planejada acabada” e entrou em uma fase de reconfiguração, em que precisa ser redesenhada segundo novos estilos de vida e demandas urbanas.`,
+    image: "/uploads/project_2.png",
+  },
+  {
+    titleKo: "프랑스 사회주택의 HLM 정책",
+    titlePt: "Política de habitação social HLM na França",
+    descriptionKo: `프랑스의 사회주택(HLM) 체계는 단순한 저소득층 지원을 넘어, 도시 내 계층 혼합과 주거 안정성을 구조적으로 보장하기 위한 국가적 도시정책입니다.
+발표에서는 HLM의 역사적 형성 배경, 공공·준공공 기관의 운영 구조, 임대료 규제 방식, 그리고 사회적 혼합(Mixité Sociale)을 구현하는 배분 원리를 중점적으로 분석했습니다.
+이를 통해 프랑스 사회주택이 단순한 복지 수단이 아니라, 도시 불평등을 완화하고 공간적 균형을 조정하는 핵심 도시계획 도구로 작동한다는 점을 확인했습니다.`,
+    descriptionPt: `O sistema de habitação social HLM na França vai além do apoio à população de baixa renda; ele é um instrumento de política urbana voltado à mistura social e à estabilidade habitacional.
+A apresentação analisou a formação histórica do HLM, a estrutura de gestão público–paraestatal, os mecanismos de regulação de aluguel e os princípios de distribuição que viabilizam a “mixité sociale”.
+Isso mostra que a habitação social francesa não é apenas uma política assistencial, mas um dispositivo central de planejamento urbano para reduzir desigualdades e reorganizar o equilíbrio espacial.`,
+    image: "/uploads/project_1.png",
+  },
+  {
+    titleKo: "포르투갈 골든비자 정책이 부동산 가격에 미친 영향",
+    titlePt:
+      "Impacto da política de Golden Visa nos preços imobiliários em Portugal",
+    descriptionKo: `포르투갈의 골든비자 정책은 외국 자본을 도시 핵심 지역으로 집중시키며 부동산 가격을 급격히 상승시킨 대표적 사례입니다.
+조사 과정에서 외국인 투자 확대가 지역 주민의 주거 접근성을 약화시키고, 도시 중심부에서의 인구 교체와 기능 변화가 가속화되는 글로벌형 젠트리피케이션으로 이어진다는 점을 확인했습니다.
+또한 한국의 규제 중심 부동산 정책과 비교했을 때, 포르투갈은 투자 유치의 부작용이 도시 불평등으로 직결되는 구조적 취약성을 갖고 있으며, 이는 주거 안정성과 도시 지속가능성을 동시에 고민해야 함을 시사합니다.`,
+    descriptionPt: `A política de Golden Visa em Portugal concentrou capital estrangeiro nas áreas centrais das cidades, impulsionando fortemente os preços imobiliários.
+A pesquisa mostrou que a ampliação do investimento externo reduz o acesso à moradia para residentes locais e acelera a substituição populacional e funcional dos centros urbanos — uma forma de gentrificação em escala global.
+Comparada à política imobiliária mais regulatória da Coreia, a experiência portuguesa revela uma vulnerabilidade estrutural: os efeitos colaterais da atração de capital são rapidamente convertidos em desigualdade urbana, exigindo respostas que conciliem investimento, estabilidade habitacional e sustentabilidade urbana.`,
+    image: "/uploads/project_4.png",
+  },
+]
 
-  // 기본 social
-  const defaultSocialLinks = [
-    { name: "GitHub", icon: "github", url: "https://github.com/dbwltnwl" },
-  ]
+export function Projects() {
+  const [lang, setLang] = useState<SiteLang>(getInitialLang)
 
-  // 기본 hero 정보
-  const defaultInfo = {
-    greeting: "단국대학교 포르투갈브라질학과",
-    name: "유지수",
-    title: "세계 도시의 흐름을 읽고 미래의 공간을 계획합니다.",
-    description:
-      "도시·부동산·언어를 함께 보며, 사람들의 삶이 실제로 변하는 지점을 공부하고 기록합니다.",
-    profileImage: "/uploads/hero-profile-1761477237286.png",
-    projectButton: "프로젝트 보기",
-    background: { image: "", video: "", color: "", opacity: 0.1 },
-  }
-
-  const [heroInfo, setHeroInfo] = useState(defaultInfo)
-  const [socialLinks, setSocialLinks] = useState(defaultSocialLinks)
-  const [backgroundData, setBackgroundData] = useState(defaultInfo.background)
-  const [showSocialEditor, setShowSocialEditor] = useState(false)
-
-  // 데이터 로드
   useEffect(() => {
-    const saved = getData("hero-info")
-    if (saved) setHeroInfo({ ...defaultInfo, ...saved })
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail as SiteLang
+      setLang(detail)
+    }
+    if (typeof window !== "undefined") {
+      setLang(getInitialLang())
+      window.addEventListener("site-lang-change", handler as EventListener)
+    }
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("site-lang-change", handler as EventListener)
+      }
+    }
+  }, [])
 
-    const savedSocial = getData("hero-social-links")
-    if (savedSocial) setSocialLinks(savedSocial)
+  const isPT = lang === "pt"
 
-    const savedBg = getData("hero-background")
-    if (savedBg) setBackgroundData(savedBg)
-  }, [isEditMode])
-
-  const updateHeroInfo = (key: string, value: string) => {
-    const newInfo = { ...heroInfo, [key]: value }
-    setHeroInfo(newInfo)
-    saveData("hero-info", newInfo)
-  }
-
-  // 부드러운 스크롤 기능 (오류 안 남)
-  const scrollToProjects = () => {
-    const section = document.querySelector("#projects")
-    if (section) section.scrollIntoView({ behavior: "smooth" })
-  }
-
-  const scrollToAbout = () => {
-    const section = document.querySelector("#about")
-    if (section) section.scrollIntoView({ behavior: "smooth" })
-  }
-
-  // 언어별 표시 텍스트
-  const displayGreeting = isPT ? HERO_PT_TEXT.greeting : heroInfo.greeting
-  const displayTitle = isPT ? HERO_PT_TEXT.title : heroInfo.title
-  const displayDescription = isPT ? HERO_PT_TEXT.description : heroInfo.description
-  const displayButton = isPT ? HERO_PT_TEXT.projectButton : heroInfo.projectButton
-
-  // ===============================
-  // RENDER START
-  // ===============================
   return (
-    <EditableBackground
-      image={backgroundData.image}
-      video={backgroundData.video}
-      color={backgroundData.color}
-      opacity={backgroundData.opacity}
-      onChange={(data) => {
-        const newBg = { ...backgroundData, ...data }
-        setBackgroundData(newBg)
-        saveData("hero-background", newBg)
-      }}
-      storageKey="hero-background"
-      className="min-h-screen flex items-center justify-center relative overflow-hidden"
-    >
-      <section id="hero" className="w-full">
-        <div className="max-w-6xl mx-auto px-4 py-20 grid md:grid-cols-2 gap-12 items-center">
+    <section id="projects" className="max-w-6xl mx-auto px-4 py-16">
+      <header className="mb-10 text-center">
+        <h1 className="text-3xl font-bold tracking-tight mb-2">
+          {isPT ? "Projetos" : "프로젝트"}
+        </h1>
+        <p className="text-gray-500 text-sm">
+          {isPT
+            ? "Pesquisas e apresentações sobre cidades, habitação e políticas urbanas."
+            : "도시, 주거, 부동산·도시 정책을 다룬 연구와 발표 작업들입니다."}
+        </p>
+      </header>
 
-          {/* ================= LANGUAGE TOGGLE ================= */}
-          <div className="order-2 md:order-1">
-            <div className="mb-4 text-sm text-muted-foreground flex gap-2 items-center">
-              <span>언어 / Idioma</span>
-              <button onClick={() => setLang("ko")}
-                className={lang === "ko" ? "font-semibold underline" : "opacity-60"}>
-                한국어
-              </button>
-              <span>/</span>
-              <button onClick={() => setLang("pt")}
-                className={lang === "pt" ? "font-semibold underline" : "opacity-60"}>
-                Português
-              </button>
-            </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {PROJECTS.map((item, idx) => (
+          <div
+            key={idx}
+            className="rounded-xl overflow-hidden shadow-md border hover:shadow-lg transition bg-white"
+          >
+            <img
+              src={item.image}
+              alt={isPT ? item.titlePt : item.titleKo}
+              className="w-full h-48 object-cover"
+            />
 
-            <h2 className="text-3xl font-bold mb-2">
-              <EditableText
-                value={displayGreeting}
-                onChange={(v) => updateHeroInfo("greeting", v)}
-                storageKey="hero-greeting"
-              />
-            </h2>
-
-            <h1 className="text-5xl font-bold mb-4">
-              <EditableText
-                value={heroInfo.name}
-                onChange={(v) => updateHeroInfo("name", v)}
-                storageKey="hero-name"
-              />
-            </h1>
-
-            <p className="text-2xl text-muted-foreground mb-4">
-              <EditableText
-                value={displayTitle}
-                onChange={(v) => updateHeroInfo("title", v)}
-                storageKey="hero-title"
-              />
-            </p>
-
-            <p className="text-lg text-muted-foreground mb-8">
-              <EditableText
-                value={displayDescription}
-                onChange={(v) => updateHeroInfo("description", v)}
-                storageKey="hero-description"
-                multiline
-              />
-            </p>
-
-            {/* ================= PROJECT BUTTON ================= */}
-            {!isEditMode ? (
-              <Button size="lg" onClick={scrollToProjects}>
-                {displayButton}
-              </Button>
-            ) : (
-              <div className="flex flex-col gap-2 w-fit">
-                <input
-                  type="text"
-                  className="px-3 py-2 border rounded-lg bg-background text-sm"
-                  value={heroInfo.projectButton}
-                  onChange={(e) => updateHeroInfo("projectButton", e.target.value)}
-                />
-                <Button size="lg" disabled>{heroInfo.projectButton}</Button>
-              </div>
-            )}
-          </div>
-
-          {/* ================= PROFILE IMAGE ================= */}
-          <div className="order-1 md:order-2 flex justify-center">
-            <div className="w-64 h-64 rounded-full overflow-hidden shadow-xl bg-muted">
-              <EditableMedia
-                src={heroInfo.profileImage}
-                onChange={(src) => updateHeroInfo("profileImage", src)}
-                storageKey="hero-profileImage"
-                type="image"
-                className="w-full h-full object-cover"
-              />
+            <div className="p-5">
+              <h3 className="text-lg font-semibold mb-2">
+                {isPT ? item.titlePt : item.titleKo}
+              </h3>
+              <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
+                {isPT ? item.descriptionPt : item.descriptionKo}
+              </p>
             </div>
           </div>
-        </div>
-
-        {/* 아래로 이동 */}
-        <button
-          onClick={scrollToAbout}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce"
-        >
-          <ArrowDown className="h-6 w-6 text-muted-foreground" />
-        </button>
-      </section>
-    </EditableBackground>
+        ))}
+      </div>
+    </section>
   )
 }
