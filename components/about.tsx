@@ -76,21 +76,14 @@ const ABOUT_PT_TEXT = {
   hobbiesTitle: "Hobbies & interesses",
   storyTitle: "Minha história",
 
-  // 경험 카드 역할/포지션 (index 순서)
   experienceDescriptions: [
-    // 단국대학교
     "Graduação em Estudos Portugueses e Brasileiros | 3º ano",
-    // 포르투갈 교환학생
     "Intercâmbio focado em língua, cultura e pesquisa sobre cidade e mercado imobiliário",
-    // 투자자산운용사
     "Certificação para aprofundar o entendimento de finanças imobiliárias e urbanas",
-    // FLEX
     "Certificação de proficiência em língua portuguesa",
-    // 동아리 멘토
     "Experiência como mentora no clube do curso, apoiando estudantes mais novos em estudos, carreira e intercâmbio.",
   ],
 
-  // 핵심 역량 제목/설명 (index 기준)
   skillTitles: [
     "Pesquisa urbana e imobiliária em perspectiva internacional",
     "Compreensão de políticas urbanas e imobiliárias",
@@ -102,7 +95,6 @@ const ABOUT_PT_TEXT = {
     "Interpreta políticas, problemas urbanos e dados de mercado em português, com foco no contexto brasileiro.",
   ],
 
-  // "나의 이야기" 문단들 (마지막은 앞으로의 방향)
   storyParagraphs: [
     "Comecei estudando língua, cultura e modos de vida nas aulas de Estudos Portugueses e Brasileiros.",
     "Mas, quando tentei entender as estruturas da cidade e do mercado imobiliário, percebi limites que meu curso sozinho não conseguia explicar completamente.",
@@ -126,7 +118,7 @@ const SKILL_META_PT = [
 ]
 
 // 경험 카드용 아이콘
-const AVAILABLE_ICONS = {
+const AVAILABLE_ICONS: Record<string, React.ComponentType<any>> = {
   briefcase: Briefcase,
   graduation: GraduationCap,
   award: Award,
@@ -139,8 +131,8 @@ const AVAILABLE_ICONS = {
   user: User,
 }
 
-// 스킬용 아이콘 (기존 편집 기능 유지)
-const SKILL_ICONS = {
+// 스킬용 아이콘
+const SKILL_ICONS: Record<string, React.ComponentType<any>> = {
   trophy: Trophy,
   sparkles: Sparkles,
   target: Target,
@@ -191,108 +183,106 @@ const SKILL_ICONS = {
   users: User,
 }
 
+// ---------- 기본 데이터 (한국어) ----------
+const DEFAULT_INFO = {
+  title: "소개",
+  subtitle: "당신의 전문성과 열정을 소개해주세요.",
+  background: { image: "", video: "", color: "", opacity: 0.1 },
+  experienceCards: [
+    {
+      icon: "briefcase",
+      title: "단국대학교",
+      period: "2023.03 ~ 2027.02 (예정)",
+      description: "포르투갈·브라질학 전공 | 3학년",
+    },
+    {
+      icon: "graduation",
+      title: "포르투갈 교환학생",
+      period: "2024.02 ~ 2024.07",
+      description: "언어·문화 + 도시/부동산 리서치 기반 탐색",
+    },
+    {
+      icon: "award",
+      title: "투자자산운용사",
+      period: "2025년 제43회 합격",
+      description: "부동산/도시 금융 이해를 위한 자격 취득",
+    },
+    {
+      icon: "award",
+      title: "FLEX (Foreign Language EXamination)",
+      period: "2023-2",
+      description: "포르투갈어 전문성 인증",
+    },
+    {
+      icon: "user",
+      title: "포르투갈·브라질학과 동아리 멘토",
+      period: "2024-2 ~",
+      description: "학업·전공·교환 준비 멘토링 진행",
+    },
+  ],
+  skills: [
+    {
+      icon: "globe",
+      title: "국제적 관점의 도시·부동산 연구",
+      description:
+        "브라질·유럽 등 다양한 국가의 도시 구조와 주거 문제를 비교·분석합니다.",
+    },
+    {
+      icon: "search",
+      title: "부동산 및 도시 정책 이해",
+      description:
+        "주거, 재생, 개발, 인프라 등 도시를 둘러싼 구조와 정책의 영향을 함께 살펴봅니다.",
+    },
+    {
+      icon: "lightbulb",
+      title: "지역 전문성",
+      description:
+        "브라질 현지 정책, 도시 문제, 시장 자료를 포르투갈어 기반으로 해석·정리합니다.",
+    },
+  ],
+  storyTitle: "나의 이야기",
+  story: [
+    "저는 포르투갈·브라질학과에서 언어와 문화, 그리고 사람의 생활방식을 먼저 배웠습니다.",
+    "하지만 도시와 부동산의 구조를 이해하려 할 때 제 전공만으로는 설명하기 어려운 지점들이 자연스럽게 보이기 시작했습니다.",
+    "도시와 공간을 이해하는 또 하나의 언어를 배우기 위해 저는 부동산학이라는 영역에 발을 들였습니다. 처음에는 낯선 용어와 개념들에 부딪히며 시행착오도 많았지만, 그 과정에서 중요한 변화를 경험했습니다.",
+    "물론 저는 여전히 부족한 점이 많습니다. 도시를 완벽하게 설명할 수 있는 것도 아니고, 부동산 시장의 모든 원리를 이해한 것도 아닙니다. 그러나 저는 이런 부족함 때문에 멈추지 않습니다. 오히려 더 깊이 관찰하고 더 많이 질문하며, 도시를 구성하는 여러 층위를 천천히 읽어나갈 수 있게 되었습니다.",
+    "앞으로는 포르투갈어·도시 연구·부동산 금융을 한 축으로 묶어, ‘도시를 언어와 자본, 정책으로 동시에 읽는 사람’이 되는 것을 목표로 하고 있습니다.",
+  ],
+  storyImage: "",
+  hobbies: ["✈️ 여행"],
+}
+
 export function About() {
   const { getData, saveData, isEditMode, saveToFile } = useInlineEditor()
   const { lang } = useLanguage()
   const isPT = lang === "pt"
 
-  // 기본 데이터 (한국어 버전)
-  const defaultInfo = {
-    title: "소개",
-    subtitle: "당신의 전문성과 열정을 소개해주세요.",
-    background: { image: "", video: "", color: "", opacity: 0.1 },
-    experienceCards: [
-      {
-        icon: "briefcase",
-        title: "단국대학교",
-        period: "2023.03 ~ 2027.02 (예정)",
-        description: "포르투갈·브라질학 전공 | 3학년",
-      },
-      {
-        icon: "graduation",
-        title: "포르투갈 교환학생",
-        period: "2024.02 ~ 2024.07",
-        description: "언어·문화 + 도시/부동산 리서치 기반 탐색",
-      },
-      {
-        icon: "award",
-        title: "투자자산운용사",
-        period: "2025년 제43회 합격",
-        description: "부동산/도시 금융 이해를 위한 자격 취득",
-      },
-      {
-        icon: "award",
-        title: "FLEX (Foreign Language Examination)",
-        period: "2023-2",
-        description: "포르투갈어 전문성 인증",
-      },
-      {
-        icon: "user",
-        title: "학과 동아리 멘토",
-        period: "2024-2 ~ ",
-        description: "학업·전공 멘토링 진행",
-      },
-    ],
-    skills: [
-      {
-        icon: "globe",
-        title: "국제적 관점의 도시·부동산 연구",
-        description:
-          "브라질·유럽 등 다양한 국가의 도시 구조와 주거 문제를 비교·분석합니다.",
-      },
-      {
-        icon: "search",
-        title: "부동산 및 도시 정책 이해",
-        description:
-          "주거, 재생, 개발, 인프라 등 도시를 둘러싼 구조와 정책의 영향을 함께 살펴봅니다.",
-      },
-      {
-        icon: "lightbulb",
-        title: "지역 전문성",
-        description:
-          "브라질 현지 정책, 도시 문제, 시장 자료를 포르투갈어 기반으로 해석·정리합니다.",
-      },
-    ],
-    storyTitle: "나의 이야기",
-    story: [
-      "저는 포르투갈·브라질학과에서 언어와 문화, 그리고 사람의 생활방식을 먼저 배웠습니다.",
-      "하지만 도시와 부동산의 구조를 이해하려 할 때 제 전공만으로는 설명하기 어려운 지점들이 자연스럽게 보이기 시작했습니다.",
-      "도시와 공간을 이해하는 또 하나의 언어를 배우기 위해 저는 부동산학이라는 영역에 발을 들였습니다. 처음에는 낯선 용어와 개념들에 부딪히며 시행착오도 많았지만, 그 과정에서 중요한 변화를 경험했습니다.",
-      "물론 저는 여전히 부족한 점이 많습니다. 도시를 완벽하게 설명할 수 있는 것도 아니고, 부동산 시장의 모든 원리를 이해한 것도 아닙니다. 그러나 저는 이런 부족함 때문에 멈추지 않습니다. 오히려 더 깊이 관찰하고 더 많이 질문하며, 도시를 구성하는 여러 층위를 천천히 읽어나갈 수 있게 되었습니다.",
-      "앞으로는 포르투갈어·도시 연구·부동산 금융을 한 축으로 묶어, ‘도시를 언어와 자본, 정책으로 동시에 읽는 사람’이 되는 것을 목표로 하고 있습니다.",
-    ],
-    storyImage: "",
-    hobbies: ["✈️ 여행"],
-  }
-
-  const [aboutInfo, setAboutInfo] = useState(defaultInfo)
-  const [backgroundData, setBackgroundData] = useState(defaultInfo.background)
+  const [aboutInfo, setAboutInfo] = useState<any>(DEFAULT_INFO)
+  const [backgroundData, setBackgroundData] = useState<any>(
+    DEFAULT_INFO.background,
+  )
   const [showCareerModal, setShowCareerModal] = useState(false)
   const [showSkillModal, setShowSkillModal] = useState(false)
   const [showHobbyModal, setShowHobbyModal] = useState(false)
 
   // 저장된 데이터 불러오기
   useEffect(() => {
-    const savedData = getData("about-info") as typeof defaultInfo | null
+    const savedData = getData("about-info") as any
     if (savedData) {
-      setAboutInfo({ ...defaultInfo, ...savedData })
+      const merged = { ...DEFAULT_INFO, ...savedData }
+      setAboutInfo(merged)
       if (savedData.background) {
         setBackgroundData(savedData.background)
       }
     }
 
-    const savedBg = getData("about-background") as
-      | { image: string; video: string; color: string; opacity: number }
-      | null
+    const savedBg = getData("about-background") as any
     if (savedBg) {
       setBackgroundData(savedBg)
     }
   }, [getData, isEditMode])
 
-  const updateAboutInfo = (
-    key: keyof typeof defaultInfo,
-    value: any,
-  ) => {
+  const updateAboutInfo = (key: string, value: any) => {
     const newInfo = { ...aboutInfo, [key]: value }
     setAboutInfo(newInfo)
     saveData("about-info", newInfo)
@@ -319,7 +309,7 @@ export function About() {
   const removeExperienceCard = (index: number) => {
     updateAboutInfo(
       "experienceCards",
-      aboutInfo.experienceCards.filter((_, i) => i !== index),
+      aboutInfo.experienceCards.filter((_: any, i: number) => i !== index),
     )
   }
 
@@ -339,7 +329,7 @@ export function About() {
   const removeSkill = (index: number) => {
     updateAboutInfo(
       "skills",
-      aboutInfo.skills.filter((_, i) => i !== index),
+      aboutInfo.skills.filter((_: any, i: number) => i !== index),
     )
   }
 
@@ -356,7 +346,7 @@ export function About() {
   const removeStory = (index: number) => {
     updateAboutInfo(
       "story",
-      aboutInfo.story.filter((_, i) => i !== index),
+      aboutInfo.story.filter((_: any, i: number) => i !== index),
     )
   }
 
@@ -373,7 +363,7 @@ export function About() {
   const removeHobby = (index: number) => {
     updateAboutInfo(
       "hobbies",
-      aboutInfo.hobbies.filter((_, i) => i !== index),
+      aboutInfo.hobbies.filter((_: any, i: number) => i !== index),
     )
   }
 
@@ -418,10 +408,9 @@ export function About() {
 
           {/* 경험 카드 */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-            {aboutInfo.experienceCards?.map((card, index) => {
+            {aboutInfo.experienceCards?.map((card: any, index: number) => {
               const Icon =
-                AVAILABLE_ICONS[card.icon as keyof typeof AVAILABLE_ICONS] ||
-                Briefcase
+                AVAILABLE_ICONS[card.icon] || Briefcase
               const descriptionText = isPT
                 ? ABOUT_PT_TEXT.experienceDescriptions[index] ??
                   card.description
@@ -509,10 +498,9 @@ export function About() {
                 {isPT ? ABOUT_PT_TEXT.skillsTitle : "핵심 역량"}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {aboutInfo.skills.map((skill, index) => {
+                {aboutInfo.skills.map((skill: any, index: number) => {
                   const Icon =
-                    SKILL_ICONS[skill.icon as keyof typeof SKILL_ICONS] ||
-                    Trophy
+                    SKILL_ICONS[skill.icon] || Trophy
                   const titleText = isPT
                     ? ABOUT_PT_TEXT.skillTitles[index] ?? skill.title
                     : skill.title
@@ -595,7 +583,7 @@ export function About() {
                       storageKey="about-storyTitle"
                     />
                   </h3>
-                  {aboutInfo.story.map((paragraph, index) => {
+                  {aboutInfo.story.map((paragraph: string, index: number) => {
                     const displayText = isPT
                       ? ABOUT_PT_TEXT.storyParagraphs[index] ?? paragraph
                       : paragraph
@@ -654,7 +642,7 @@ export function About() {
                 {isPT ? ABOUT_PT_TEXT.hobbiesTitle : "취미 & 관심사"}
               </h3>
               <div className="flex flex-wrap justify-center gap-3">
-                {aboutInfo.hobbies.map((hobby, index) => (
+                {aboutInfo.hobbies.map((hobby: string, index: number) => (
                   <span
                     key={index}
                     className="px-4 py-2 bg-primary/10 text-primary rounded-full text-sm relative group flex items-center justify-center"
@@ -704,7 +692,7 @@ export function About() {
             </div>
 
             <div className="space-y-3">
-              {aboutInfo.experienceCards?.map((card, index) => (
+              {aboutInfo.experienceCards?.map((card: any, index: number) => (
                 <div
                   key={index}
                   className="flex items-start gap-3 p-3 border rounded-lg bg-muted/30"
@@ -828,10 +816,9 @@ export function About() {
             </div>
 
             <div className="space-y-3">
-              {aboutInfo.skills.map((skill, index) => {
+              {aboutInfo.skills.map((skill: any, index: number) => {
                 const Icon =
-                  SKILL_ICONS[skill.icon as keyof typeof SKILL_ICONS] ||
-                  Trophy
+                  SKILL_ICONS[skill.icon] || Trophy
                 return (
                   <div
                     key={index}
@@ -976,7 +963,7 @@ export function About() {
             </div>
 
             <div className="space-y-3">
-              {aboutInfo.hobbies.map((hobby, index) => (
+              {aboutInfo.hobbies.map((hobby: string, index: number) => (
                 <div
                   key={index}
                   className="flex items-center gap-3 p-3 border rounded-lg"
