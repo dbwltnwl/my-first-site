@@ -7,22 +7,15 @@ import {
   Briefcase,
   GraduationCap,
   Award,
-  Heart,
-  Coffee,
-  Book,
+  Globe,
+  Target,
+  Lightbulb,
   Plus,
   X,
   Settings,
-  Calendar,
-  Building,
-  User,
   Trophy,
-  Star,
-  Lightbulb,
-  Target,
-  Rocket,
-  Shield,
   Sparkles,
+  Brain,
   Code,
   Database,
   Palette,
@@ -31,7 +24,6 @@ import {
   LineChart,
   PieChart,
   Activity,
-  Brain,
   Cpu,
   Layers,
   Package,
@@ -60,90 +52,101 @@ import {
   Volume2,
   Headphones,
   Radio,
-  Zap,
-  Globe,
-  Users,
-  TrendingUp,
-  BookOpen,
-  MapPin,
-  Clock,
-  CheckCircle,
-  AlertCircle,
-  Home,
-  School,
+  Heart,
+  Shield,
+  Building,
+  Calendar,
+  Book,
+  Coffee,
+  User,
 } from "lucide-react"
 import { EditableText } from "@/components/editable/editable-text"
 import { EditableMedia } from "@/components/editable/editable-media"
 import { EditableBackground } from "@/components/editable/editable-background"
 import { useInlineEditor } from "@/contexts/inline-editor-context"
 import { COMMON_STYLES } from "@/lib/constants"
+import { useLanguage } from "@/contexts/language-context"
 
-type SiteLang = "ko" | "pt"
+// ---------- 포르투갈어 고정 텍스트 ----------
+const ABOUT_PT_TEXT = {
+  title: "Sobre",
+  subtitle:
+    "Apresente sua formação, experiências e como você enxerga cidade, espaço e pessoas.",
+  skillsTitle: "Competências principais",
+  hobbiesTitle: "Hobbies & interesses",
+  storyTitle: "Minha história",
 
-function useSiteLang() {
-  const [lang, setLang] = useState<SiteLang>("ko")
+  // 경험 카드 역할/포지션 (index 순서)
+  experienceDescriptions: [
+    // 단국대학교
+    "Graduação em Estudos Portugueses e Brasileiros | 3º ano",
+    // 포르투갈 교환학생
+    "Intercâmbio focado em língua, cultura e pesquisa sobre cidade e mercado imobiliário",
+    // 투자자산운용사
+    "Certificação para aprofundar o entendimento de finanças imobiliárias e urbanas",
+    // FLEX
+    "Certificação de proficiência em língua portuguesa",
+    // 동아리 멘토
+    "Experiência como mentora no clube do curso, apoiando estudantes mais novos em estudos, carreira e intercâmbio.",
+  ],
 
-  useEffect(() => {
-    if (typeof window === "undefined") return
+  // 핵심 역량 제목/설명 (index 기준)
+  skillTitles: [
+    "Pesquisa urbana e imobiliária em perspectiva internacional",
+    "Compreensão de políticas urbanas e imobiliárias",
+    "Especialização regional em Brasil e países lusófonos",
+  ],
+  skillDescriptions: [
+    "Compara estruturas urbanas e problemas habitacionais de diferentes países, como Brasil e Europa.",
+    "Analisa como habitação, renovação urbana, desenvolvimento e infraestrutura impactam a cidade.",
+    "Interpreta políticas, problemas urbanos e dados de mercado em português, com foco no contexto brasileiro.",
+  ],
 
-    const stored = window.localStorage.getItem("site-lang")
-    if (stored === "ko" || stored === "pt") {
-      setLang(stored)
-    }
+  // "나의 이야기" 문단들 (마지막은 앞으로의 방향)
+  storyParagraphs: [
+    "Comecei estudando língua, cultura e modos de vida nas aulas de Estudos Portugueses e Brasileiros.",
+    "Mas, quando tentei entender as estruturas da cidade e do mercado imobiliário, percebi limites que meu curso sozinho não conseguia explicar completamente.",
+    "Para aprender uma outra 'linguagem' da cidade e do espaço, entrei na área de estudos imobiliários. No começo, os termos técnicos e conceitos eram desafiadores, mas esse processo trouxe mudanças importantes.",
+    "Ainda tenho muito o que aprender. Não consigo explicar a cidade por completo, nem afirmar que entendo todos os mecanismos do mercado imobiliário. Mas, justamente por reconhecer essas lacunas, passei a observar com mais cuidado, fazer mais perguntas e ler a cidade em várias camadas.",
+    "Daqui para frente, quero unir português, estudos urbanos e finanças imobiliárias em um único eixo — tornando-me alguém capaz de ler a cidade simultaneamente pela linguagem, pelo capital e pelas políticas públicas.",
+  ],
+} as const
 
-    const handler = (e: Event) => {
-      const anyEvent = e as CustomEvent
-      const next = anyEvent.detail?.lang
-      if (next === "ko" || next === "pt") {
-        setLang(next)
-      }
-    }
+// 핵심 역량 아래 한 줄 메타 정보 (도구/방식)
+const SKILL_META_KO = [
+  "도구: 지도, 통계, 정책 리포트",
+  "접근법: 사례 비교, 리스크 분석",
+  "기반: 포르투갈어 1차 자료 해석",
+]
 
-    window.addEventListener("site-lang-change", handler)
-    return () => window.removeEventListener("site-lang-change", handler)
-  }, [])
-
-  return lang
-}
+const SKILL_META_PT = [
+  "Ferramentas: mapas, estatísticas, relatórios de políticas públicas",
+  "Abordagem: comparação de casos e análise de risco",
+  "Base: leitura de fontes primárias em português",
+]
 
 // 경험 카드용 아이콘
 const AVAILABLE_ICONS = {
   briefcase: Briefcase,
   graduation: GraduationCap,
   award: Award,
-  trophy: Trophy,
-  star: Star,
-  lightbulb: Lightbulb,
-  target: Target,
-  rocket: Rocket,
-  shield: Shield,
+  globe: Globe,
+  book: Book,
   building: Building,
   calendar: Calendar,
-  book: Book,
   heart: Heart,
   coffee: Coffee,
   user: User,
-  zap: Zap,
-  globe: Globe,
-  users: Users,
-  trending: TrendingUp,
-  bookOpen: BookOpen,
-  mapPin: MapPin,
-  clock: Clock,
-  check: CheckCircle,
-  alert: AlertCircle,
-  home: Home,
-  school: School,
 }
 
-// 스킬용 아이콘
+// 스킬용 아이콘 (기존 편집 기능 유지)
 const SKILL_ICONS = {
   trophy: Trophy,
   sparkles: Sparkles,
   target: Target,
-  rocket: Rocket,
-  star: Star,
-  zap: Zap,
+  rocket: Target,
+  star: Trophy,
+  zap: Activity,
   lightbulb: Lightbulb,
   brain: Brain,
   code: Code,
@@ -185,67 +188,13 @@ const SKILL_ICONS = {
   heart: Heart,
   shield: Shield,
   globe: Globe,
-  users: Users,
-}
-
-// 🔹 포르투갈어 버전 텍스트
-const ABOUT_PT_TEXT = {
-  title: "Sobre mim",
-  subtitle:
-    "Apresento aqui minha formação, interesses e o caminho que estou construindo entre cidades, línguas e mercado imobiliário.",
-  experience: [
-    {
-      title: "Universidade Dankook",
-      period: "03.2023 ~ 02.2027 (previsto)",
-      description: "Graduação em Português e Estudos Brasileiros",
-    },
-    {
-      title: "Intercâmbio em Portugal",
-      period: "02.2024 ~ 07.2024",
-      description: "Universidade de Coimbra",
-    },
-    {
-      title: "Certificado de Gestora de Investimentos",
-      period: "43ª edição (2025)",
-      description: "",
-    },
-    {
-      title: "FLEX (Foreign Language EXamination)",
-      period: "2023-2",
-      description: "",
-    },
-  ],
-  skills: [
-    {
-      title: "Pesquisa urbana e imobiliária em perspectiva internacional",
-      description:
-        "Comparo estruturas urbanas e problemas habitacionais em diferentes países.",
-    },
-    {
-      title: "Compreensão de políticas urbanas e imobiliárias",
-      description:
-        "Analiso como habitação, requalificação, desenvolvimento e infraestrutura se articulam nas cidades.",
-    },
-    {
-      title: "Especialização regional",
-      description:
-        "Interpreto políticas, questões urbanas e dados de mercado brasileiros com base em fontes em português.",
-    },
-  ],
-  storyTitle: "Minha trajetória",
-  story: [
-    "Comecei estudando português, cultura e modos de vida em países lusófonos no curso de Estudos Portugueses e Brasileiros.",
-    "Mas, ao tentar entender a estrutura das cidades e do mercado imobiliário, percebi que só o meu curso de origem não explicava todos os pontos que eu via na realidade.",
-    "Para aprender uma nova “língua” que explicasse cidade e espaço, entrei na área de estudos imobiliários. No início, enfrentei muitos termos e conceitos desconhecidos, mas esse processo trouxe mudanças importantes na forma como observo o mundo urbano.",
-    "Ainda tenho muito o que aprender. Não consigo explicar completamente a cidade nem entendo todos os mecanismos do mercado imobiliário. Mesmo assim, não paro por causa dessas faltas. Pelo contrário, elas me fazem observar com mais cuidado, fazer mais perguntas e ler, com calma, as várias camadas que compõem a cidade.",
-  ],
-  hobbiesTitle: "Interesses & hobbies",
+  users: User,
 }
 
 export function About() {
   const { getData, saveData, isEditMode, saveToFile } = useInlineEditor()
-  const lang = useSiteLang()
-  const isPT = !isEditMode && lang === "pt"
+  const { lang } = useLanguage()
+  const isPT = lang === "pt"
 
   // 기본 데이터 (한국어 버전)
   const defaultInfo = {
@@ -257,32 +206,39 @@ export function About() {
         icon: "briefcase",
         title: "단국대학교",
         period: "2023.03 ~ 2027.02 (예정)",
-        description: "포르투갈·브라질학 전공",
+        description: "포르투갈·브라질학 전공 | 3학년",
       },
       {
         icon: "graduation",
         title: "포르투갈 교환학생",
         period: "2024.02 ~ 2024.07",
-        description: "University of Coimbra",
+        description: "언어·문화 + 도시/부동산 리서치 기반 탐색",
       },
       {
         icon: "award",
         title: "투자자산운용사",
         period: "2025년 제43회 합격",
-        description: "",
+        description: "부동산/도시 금융 이해를 위한 자격 취득",
       },
       {
         icon: "award",
-        title: "FLEX (Foreign Language EXamination)",
+        title: "FLEX (Foreign Language Examination)",
         period: "2023-2",
-        description: "",
+        description: "포르투갈어 전문성 인증",
+      },
+      {
+        icon: "user",
+        title: "학과 동아리 멘토",
+        period: "2024-2 ~ ",
+        description: "학업·전공 멘토링 진행",
       },
     ],
     skills: [
       {
         icon: "globe",
         title: "국제적 관점의 도시·부동산 연구",
-        description: "브라질·유럽 등 다양한 국가의 도시 구조와 주거 문제를 비교·분석합니다.",
+        description:
+          "브라질·유럽 등 다양한 국가의 도시 구조와 주거 문제를 비교·분석합니다.",
       },
       {
         icon: "search",
@@ -303,6 +259,7 @@ export function About() {
       "하지만 도시와 부동산의 구조를 이해하려 할 때 제 전공만으로는 설명하기 어려운 지점들이 자연스럽게 보이기 시작했습니다.",
       "도시와 공간을 이해하는 또 하나의 언어를 배우기 위해 저는 부동산학이라는 영역에 발을 들였습니다. 처음에는 낯선 용어와 개념들에 부딪히며 시행착오도 많았지만, 그 과정에서 중요한 변화를 경험했습니다.",
       "물론 저는 여전히 부족한 점이 많습니다. 도시를 완벽하게 설명할 수 있는 것도 아니고, 부동산 시장의 모든 원리를 이해한 것도 아닙니다. 그러나 저는 이런 부족함 때문에 멈추지 않습니다. 오히려 더 깊이 관찰하고 더 많이 질문하며, 도시를 구성하는 여러 층위를 천천히 읽어나갈 수 있게 되었습니다.",
+      "앞으로는 포르투갈어·도시 연구·부동산 금융을 한 축으로 묶어, ‘도시를 언어와 자본, 정책으로 동시에 읽는 사람’이 되는 것을 목표로 하고 있습니다.",
     ],
     storyImage: "",
     hobbies: ["✈️ 여행"],
@@ -314,28 +271,28 @@ export function About() {
   const [showSkillModal, setShowSkillModal] = useState(false)
   const [showHobbyModal, setShowHobbyModal] = useState(false)
 
-  // 데이터 로드
+  // 저장된 데이터 불러오기
   useEffect(() => {
     const savedData = getData("about-info") as typeof defaultInfo | null
     if (savedData) {
       setAboutInfo({ ...defaultInfo, ...savedData })
       if (savedData.background) {
-        setBackgroundData(savedData.background as any)
+        setBackgroundData(savedData.background)
       }
     }
 
-    const savedBg = getData("about-background") as {
-      image: string
-      video: string
-      color: string
-      opacity: number
-    } | null
+    const savedBg = getData("about-background") as
+      | { image: string; video: string; color: string; opacity: number }
+      | null
     if (savedBg) {
       setBackgroundData(savedBg)
     }
   }, [getData, isEditMode])
 
-  const updateAboutInfo = (key: keyof typeof defaultInfo, value: any) => {
+  const updateAboutInfo = (
+    key: keyof typeof defaultInfo,
+    value: any,
+  ) => {
     const newInfo = { ...aboutInfo, [key]: value }
     setAboutInfo(newInfo)
     saveData("about-info", newInfo)
@@ -362,7 +319,7 @@ export function About() {
   const removeExperienceCard = (index: number) => {
     updateAboutInfo(
       "experienceCards",
-      aboutInfo.experienceCards.filter((_, i) => i !== index)
+      aboutInfo.experienceCards.filter((_, i) => i !== index),
     )
   }
 
@@ -382,7 +339,7 @@ export function About() {
   const removeSkill = (index: number) => {
     updateAboutInfo(
       "skills",
-      aboutInfo.skills.filter((_, i) => i !== index)
+      aboutInfo.skills.filter((_, i) => i !== index),
     )
   }
 
@@ -399,7 +356,7 @@ export function About() {
   const removeStory = (index: number) => {
     updateAboutInfo(
       "story",
-      aboutInfo.story.filter((_, i) => i !== index)
+      aboutInfo.story.filter((_, i) => i !== index),
     )
   }
 
@@ -416,7 +373,7 @@ export function About() {
   const removeHobby = (index: number) => {
     updateAboutInfo(
       "hobbies",
-      aboutInfo.hobbies.filter((_, i) => i !== index)
+      aboutInfo.hobbies.filter((_, i) => i !== index),
     )
   }
 
@@ -463,18 +420,12 @@ export function About() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
             {aboutInfo.experienceCards?.map((card, index) => {
               const Icon =
-                AVAILABLE_ICONS[
-                  card.icon as keyof typeof AVAILABLE_ICONS
-                ] || Briefcase
-
-              const ptExp = ABOUT_PT_TEXT.experience[index]
-
-              const titleValue =
-                isPT && ptExp ? ptExp.title : card.title
-              const periodValue =
-                isPT && ptExp ? ptExp.period : card.period
-              const descValue =
-                isPT && ptExp ? ptExp.description : card.description
+                AVAILABLE_ICONS[card.icon as keyof typeof AVAILABLE_ICONS] ||
+                Briefcase
+              const descriptionText = isPT
+                ? ABOUT_PT_TEXT.experienceDescriptions[index] ??
+                  card.description
+                : card.description
 
               return (
                 <Card
@@ -497,7 +448,7 @@ export function About() {
                       <div className="flex-1">
                         <h3 className="font-semibold text-foreground mb-1">
                           <EditableText
-                            value={titleValue}
+                            value={card.title}
                             onChange={(value) =>
                               updateExperienceCard(index, "title", value)
                             }
@@ -506,7 +457,7 @@ export function About() {
                         </h3>
                         <p className="text-sm text-primary mb-2">
                           <EditableText
-                            value={periodValue}
+                            value={card.period}
                             onChange={(value) =>
                               updateExperienceCard(index, "period", value)
                             }
@@ -515,12 +466,12 @@ export function About() {
                         </p>
                         <p className="text-sm text-muted-foreground">
                           <EditableText
-                            value={descValue}
+                            value={descriptionText}
                             onChange={(value) =>
                               updateExperienceCard(
                                 index,
                                 "description",
-                                value
+                                value,
                               )
                             }
                             storageKey={`about-experience-${index}-description`}
@@ -555,21 +506,23 @@ export function About() {
           {(aboutInfo.skills.length > 0 || isEditMode) && (
             <div className="mb-16">
               <h3 className="text-2xl font-bold text-foreground mb-8 text-center">
-                {isPT ? "Competências principais" : "핵심 역량"}
+                {isPT ? ABOUT_PT_TEXT.skillsTitle : "핵심 역량"}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {aboutInfo.skills.map((skill, index) => {
                   const Icon =
                     SKILL_ICONS[skill.icon as keyof typeof SKILL_ICONS] ||
                     Trophy
-                  const ptSkill = ABOUT_PT_TEXT.skills[index]
-
-                  const skillTitle =
-                    isPT && ptSkill ? ptSkill.title : skill.title
-                  const skillDesc =
-                    isPT && ptSkill
-                      ? ptSkill.description
-                      : skill.description
+                  const titleText = isPT
+                    ? ABOUT_PT_TEXT.skillTitles[index] ?? skill.title
+                    : skill.title
+                  const descText = isPT
+                    ? ABOUT_PT_TEXT.skillDescriptions[index] ??
+                      skill.description
+                    : skill.description
+                  const metaText = isPT
+                    ? SKILL_META_PT[index]
+                    : SKILL_META_KO[index]
 
                   return (
                     <div key={index} className="text-center relative">
@@ -586,16 +539,16 @@ export function About() {
                       </div>
                       <h4 className="font-semibold text-foreground mb-2">
                         <EditableText
-                          value={skillTitle}
+                          value={titleText}
                           onChange={(value) =>
                             updateSkill(index, "title", value)
                           }
                           storageKey={`about-skill-${index}-title`}
                         />
                       </h4>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-muted-foreground mb-1">
                         <EditableText
-                          value={skillDesc}
+                          value={descText}
                           onChange={(value) =>
                             updateSkill(index, "description", value)
                           }
@@ -603,6 +556,11 @@ export function About() {
                           multiline
                         />
                       </p>
+                      {metaText && (
+                        <p className="text-xs text-muted-foreground/80">
+                          {metaText}
+                        </p>
+                      )}
                     </div>
                   )
                 })}
@@ -631,20 +589,16 @@ export function About() {
                   <h3 className="text-2xl font-bold text-foreground mb-4">
                     <EditableText
                       value={
-                        isPT
-                          ? ABOUT_PT_TEXT.storyTitle
-                          : aboutInfo.storyTitle
+                        isPT ? ABOUT_PT_TEXT.storyTitle : aboutInfo.storyTitle
                       }
-                      onChange={(value) =>
-                        updateAboutInfo("storyTitle", value)
-                      }
+                      onChange={(value) => updateAboutInfo("storyTitle", value)}
                       storageKey="about-storyTitle"
                     />
                   </h3>
                   {aboutInfo.story.map((paragraph, index) => {
-                    const ptPara = ABOUT_PT_TEXT.story[index]
-                    const value =
-                      isPT && ptPara ? ptPara : paragraph
+                    const displayText = isPT
+                      ? ABOUT_PT_TEXT.storyParagraphs[index] ?? paragraph
+                      : paragraph
                     return (
                       <div key={index} className="relative mb-4">
                         {isEditMode && (
@@ -657,8 +611,8 @@ export function About() {
                         )}
                         <p className="text-muted-foreground leading-relaxed">
                           <EditableText
-                            value={value}
-                            onChange={(v) => updateStory(index, v)}
+                            value={displayText}
+                            onChange={(value) => updateStory(index, value)}
                             storageKey={`about-story-${index}`}
                             multiline
                           />
@@ -681,9 +635,7 @@ export function About() {
                 <div className="relative w-full h-full min-h-[500px] lg:min-h-full">
                   <EditableMedia
                     src={aboutInfo.storyImage}
-                    onChange={(src) =>
-                      updateAboutInfo("storyImage", src)
-                    }
+                    onChange={(src) => updateAboutInfo("storyImage", src)}
                     type="image"
                     storageKey="about-storyImage"
                     className="w-full h-full object-cover"
@@ -699,9 +651,7 @@ export function About() {
           {(aboutInfo.hobbies.length > 0 || isEditMode) && (
             <div className="mt-16 text-center">
               <h3 className="text-2xl font-bold text-foreground mb-8">
-                {isPT
-                  ? ABOUT_PT_TEXT.hobbiesTitle
-                  : "취미 & 관심사"}
+                {isPT ? ABOUT_PT_TEXT.hobbiesTitle : "취미 & 관심사"}
               </h3>
               <div className="flex flex-wrap justify-center gap-3">
                 {aboutInfo.hobbies.map((hobby, index) => (
@@ -719,9 +669,7 @@ export function About() {
                     )}
                     <EditableText
                       value={hobby}
-                      onChange={(value) =>
-                        updateHobby(index, value)
-                      }
+                      onChange={(value) => updateHobby(index, value)}
                       storageKey={`about-hobby-${index}`}
                     />
                   </span>
@@ -756,100 +704,77 @@ export function About() {
             </div>
 
             <div className="space-y-3">
-              {aboutInfo.experienceCards?.map((card, index) => {
-                const Icon =
-                  AVAILABLE_ICONS[
-                    card.icon as keyof typeof AVAILABLE_ICONS
-                  ] || Briefcase
-                return (
-                  <div
-                    key={index}
-                    className="flex items-start gap-3 p-3 border rounded-lg bg-muted/30"
+              {aboutInfo.experienceCards?.map((card, index) => (
+                <div
+                  key={index}
+                  className="flex items-start gap-3 p-3 border rounded-lg bg-muted/30"
+                >
+                  {/* 아이콘 선택 */}
+                  <select
+                    value={card.icon}
+                    onChange={(e) =>
+                      updateExperienceCard(index, "icon", e.target.value)
+                    }
+                    className="w-40 px-2 py-2 border rounded-lg bg-background"
                   >
-                    {/* 아이콘 선택 */}
-                    <select
-                      value={card.icon}
-                      onChange={(e) =>
-                        updateExperienceCard(
-                          index,
-                          "icon",
-                          e.target.value
-                        )
-                      }
-                      className="w-40 px-2 py-2 border rounded-lg bg-background"
-                    >
-                      <option value="briefcase">💼 직장</option>
-                      <option value="graduation">🎓 학교</option>
-                      <option value="award">🏆 수상</option>
-                      <option value="trophy">🏅 성과</option>
-                      <option value="star">⭐ 우수</option>
-                      <option value="lightbulb">💡 아이디어</option>
-                      <option value="target">🎯 목표</option>
-                      <option value="rocket">🚀 시작</option>
-                      <option value="shield">🛡️ 보안</option>
-                      <option value="building">🏢 회사</option>
-                      <option value="calendar">📅 기간</option>
-                      <option value="book">📚 교육</option>
-                      <option value="heart">❤️ 열정</option>
-                      <option value="coffee">☕ 일상</option>
-                      <option value="user">👤 개인</option>
-                    </select>
+                    <option value="briefcase">💼 직장</option>
+                    <option value="graduation">🎓 학교</option>
+                    <option value="award">🏆 수상/자격</option>
+                    <option value="globe">🌍 해외/국제</option>
+                    <option value="book">📚 학문/연구</option>
+                    <option value="building">🏢 기관/조직</option>
+                    <option value="calendar">📅 기간</option>
+                    <option value="heart">❤️ 열정</option>
+                    <option value="coffee">☕ 활동</option>
+                    <option value="user">👤 멘토링/리더십</option>
+                  </select>
 
-                    <div className="flex-1 space-y-2">
+                  <div className="flex-1 space-y-2">
+                    <input
+                      type="text"
+                      value={card.title}
+                      onChange={(e) =>
+                        updateExperienceCard(index, "title", e.target.value)
+                      }
+                      placeholder="예: 단국대학교, 교환학생, 자격증"
+                      className="w-full px-3 py-2 border rounded-lg bg-background font-semibold"
+                    />
+
+                    <div className="flex flex-col gap-2 md:flex-row">
                       <input
                         type="text"
-                        value={card.title}
+                        value={card.period}
+                        onChange={(e) =>
+                          updateExperienceCard(index, "period", e.target.value)
+                        }
+                        placeholder="예: 2023.03 ~ 2027.02"
+                        className="flex-1 px-3 py-2 border rounded-lg bg-background"
+                      />
+
+                      <input
+                        type="text"
+                        value={card.description}
                         onChange={(e) =>
                           updateExperienceCard(
                             index,
-                            "title",
-                            e.target.value
+                            "description",
+                            e.target.value,
                           )
                         }
-                        placeholder="예: ABC 회사, 서울대학교, 구글 자격증"
-                        className="w-full px-3 py-2 border rounded-lg bg-background font-semibold"
+                        placeholder="예: 전공/역할/포지션 등"
+                        className="flex-1 px-3 py-2 border rounded-lg bg-background"
                       />
-
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          value={card.period}
-                          onChange={(e) =>
-                            updateExperienceCard(
-                              index,
-                              "period",
-                              e.target.value
-                            )
-                          }
-                          placeholder="예: 2020 - 현재"
-                          className="flex-1 px-3 py-2 border rounded-lg bg-background"
-                        />
-
-                        <input
-                          type="text"
-                          value={card.description}
-                          onChange={(e) =>
-                            updateExperienceCard(
-                              index,
-                              "description",
-                              e.target.value
-                            )
-                          }
-                          placeholder="예: 마케팅 매니저, 경영학 학사, GAIQ 인증"
-                          className="flex-1 px-3 py-2 border rounded-lg bg-background"
-                        />
-                      </div>
                     </div>
-
-                    <button
-                      onClick={() => removeExperienceCard(index)}
-                      className="p-2 text-destructive hover:bg-destructive/10 rounded-lg"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
                   </div>
-                )
-              })}
+
+                  <button
+                    onClick={() => removeExperienceCard(index)}
+                    className="p-2 text-destructive hover:bg-destructive/10 rounded-lg"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
 
               <button
                 onClick={addExperienceCard}
@@ -912,7 +837,6 @@ export function About() {
                     key={index}
                     className="flex items-start gap-3 p-3 border rounded-lg bg-muted/30"
                   >
-                    {/* 아이콘 선택 */}
                     <div className="flex flex-col items-center gap-2">
                       <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                         <Icon className="h-6 w-6 text-primary" />
@@ -926,10 +850,10 @@ export function About() {
                       >
                         <optgroup label="기술 스킬">
                           <option value="code">💻 코드/개발</option>
-                          <option value="database">🗜️ 데이터베이스</option>
+                          <option value="database">🗄 데이터베이스</option>
                           <option value="server">🌐 서버/클라우드</option>
                           <option value="smartphone">📱 모바일</option>
-                          <option value="monitor">🖥️ 프론트엔드</option>
+                          <option value="monitor">🖥 프론트엔드</option>
                           <option value="cpu">🤖 AI/ML</option>
                           <option value="gitBranch">🌿 Git/버전관리</option>
                           <option value="lock">🔒 보안</option>
@@ -946,7 +870,7 @@ export function About() {
                           <option value="palette">🎨 디자인</option>
                           <option value="camera">📷 사진/영상</option>
                           <option value="music">🎵 음악/오디오</option>
-                          <option value="edit">✏️ 글쓰기/편집</option>
+                          <option value="edit">✏ 글쓰기/편집</option>
                           <option value="video">🎬 영상 제작</option>
                         </optgroup>
                         <optgroup label="일반 역량">
@@ -958,7 +882,7 @@ export function About() {
                           <option value="zap">⚡ 속도/효율</option>
                           <option value="star">⭐ 전문성</option>
                           <option value="heart">❤️ 열정</option>
-                          <option value="shield">🛡️ 신뢰성</option>
+                          <option value="shield">🛡 신뢰성</option>
                           <option value="globe">🌍 글로벌</option>
                         </optgroup>
                       </select>
@@ -971,7 +895,7 @@ export function About() {
                         onChange={(e) =>
                           updateSkill(index, "title", e.target.value)
                         }
-                        placeholder="예: 프론트엔드 개발, 데이터 분석, 프로젝트 관리"
+                        placeholder="예: 데이터 분석, 프로젝트 기획"
                         className="w-full px-3 py-2 border rounded-lg bg-background font-semibold"
                       />
 
@@ -980,7 +904,7 @@ export function About() {
                         onChange={(e) =>
                           updateSkill(index, "description", e.target.value)
                         }
-                        placeholder="예: React와 TypeScript를 활용한 모던 웹 애플리케이션 개발"
+                        placeholder="예: 통계 분석과 시각화를 통한 인사이트 도출"
                         className="w-full px-3 py-2 border rounded-lg bg-background resize-none"
                         rows={2}
                       />
@@ -1007,7 +931,8 @@ export function About() {
 
             <div className="mt-6 pt-4 border-t">
               <p className="text-sm text-muted-foreground mb-4">
-                💡 팁: 아이콘을 선택하고 제목과 설명을 입력하세요. 필요한 만큼 자유롭게 추가할 수 있습니다.
+                💡 팁: 아이콘을 선택하고 제목과 설명을 입력하세요. 필요한 만큼
+                자유롭게 추가할 수 있습니다.
               </p>
               <div className="flex gap-2">
                 <button
@@ -1059,9 +984,7 @@ export function About() {
                   <input
                     type="text"
                     value={hobby}
-                    onChange={(e) =>
-                      updateHobby(index, e.target.value)
-                    }
+                    onChange={(e) => updateHobby(index, e.target.value)}
                     placeholder="예: 📚 독서"
                     className="flex-1 px-3 py-2 border rounded-lg bg-background"
                   />
@@ -1086,9 +1009,7 @@ export function About() {
 
             <div className="mt-6 pt-4 border-t">
               <div className="mb-4">
-                <p className="text-sm font-medium mb-2">
-                  🎯 취미 예시:
-                </p>
+                <p className="text-sm font-medium mb-2">🎯 취미 예시:</p>
                 <div className="flex flex-wrap gap-2">
                   {[
                     "📚 독서",
@@ -1130,7 +1051,8 @@ export function About() {
                 </div>
               </div>
               <p className="text-sm text-muted-foreground mb-4">
-                💡 팁: 이모지와 함께 취미를 입력하세요. 예시를 클릭하면 새 취미가 추가됩니다.
+                💡 팁: 이모지와 함께 취미를 입력하세요. 예시를 클릭하면 새
+                취미가 추가됩니다.
               </p>
               <div className="flex gap-2">
                 <button
