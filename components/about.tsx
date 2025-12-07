@@ -207,12 +207,17 @@ const ABOUT_PT_TEXT = {
     {
       title: "Certificado de Gestora de Investimentos",
       period: "43ª edição (2025)",
-      description: "",
+      description: "Qualificação para aprofundar finanças imobiliárias e urbanas",
     },
     {
       title: "FLEX (Foreign Language EXamination)",
       period: "2023-2",
-      description: "",
+      description: "Certificação de proficiência em língua portuguesa",
+    },
+    {
+      title: "Mentora do Clube Acadêmico",
+      period: "Desde 2024-2",
+      description: "Mentoria em estudos, carreira e preparação para intercâmbio",
     },
   ],
   skills: [
@@ -277,6 +282,11 @@ export function About() {
         period: "2023-2",
         description: "",
       },
+      {
+      title: "학과 동아리 멘토",
+      period: "2024-2~",
+      description: "학업·전공·교환 준비 멘토링 진행",
+   },
     ],
     skills: [
       {
@@ -303,6 +313,7 @@ export function About() {
       "하지만 도시와 부동산의 구조를 이해하려 할 때 제 전공만으로는 설명하기 어려운 지점들이 자연스럽게 보이기 시작했습니다.",
       "도시와 공간을 이해하는 또 하나의 언어를 배우기 위해 저는 부동산학이라는 영역에 발을 들였습니다. 처음에는 낯선 용어와 개념들에 부딪히며 시행착오도 많았지만, 그 과정에서 중요한 변화를 경험했습니다.",
       "물론 저는 여전히 부족한 점이 많습니다. 도시를 완벽하게 설명할 수 있는 것도 아니고, 부동산 시장의 모든 원리를 이해한 것도 아닙니다. 그러나 저는 이런 부족함 때문에 멈추지 않습니다. 오히려 더 깊이 관찰하고 더 많이 질문하며, 도시를 구성하는 여러 층위를 천천히 읽어나갈 수 있게 되었습니다.",
+      "앞으로는 포어·도시 연구·부동산 금융을 하나로 묶어 도시를 언어·자본·정책으로 읽는 사람이 되고자 합니다.",
     ],
     storyImage: "",
     hobbies: ["✈️ 여행"],
