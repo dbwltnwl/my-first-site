@@ -1,9 +1,9 @@
 "use client"
-
 import * as React from "react"
 
 type SiteLang = "ko" | "pt"
 
+// 언어 감지 훅
 function useSiteLang() {
   const [lang, setLang] = React.useState<SiteLang>("ko")
 
@@ -36,6 +36,10 @@ type ProjectItem = {
   titlePt: string
   descriptionKo: string
   descriptionPt: string
+  tagsKo: string[]
+  tagsPt: string[]
+  conclusionKo: string
+  conclusionPt: string
 }
 
 const PROJECTS: ProjectItem[] = [
@@ -49,7 +53,13 @@ const PROJECTS: ProjectItem[] = [
     descriptionPt: `As favelas são assentamentos informais nas cidades brasileiras, mas funcionam como um mercado imobiliário próprio, estruturado por redes sociais, percepção de risco e custos de segurança.
 Ao longo da pesquisa, identifiquei que o valor da moradia é definido menos por direitos formais de propriedade e mais por fatores como segurança, vínculos comunitários e exposição ao risco.
 Isso mostra que a favela não é apenas um território de pobreza, mas um mercado imobiliário autônomo, com lógica distinta do mercado formal.`,
+
+    tagsKo: ["#브라질", "#비공식부동산시장", "#위험·가격구조"],
+    tagsPt: ["#Brasil", "#MercadoInformal", "#RiscoPreço"],
+    conclusionKo: "이 연구는 파벨라가 공식 시장과 다른 고유한 가격·위험 구조를 가진 독립적 시장임을 보여준다.",
+    conclusionPt: "O estudo evidencia que a favela funciona como um mercado autônomo com lógica própria de preço e risco.",
   },
+
   {
     image: "/uploads/project_2.png",
     titleKo: "분당 정자동 아파트 지구 노후계획도시",
@@ -60,7 +70,13 @@ Isso mostra que a favela não é apenas um território de pobreza, mas um mercad
     descriptionPt: `O envelhecimento do bairro de apartamentos em Jeongja, Bundang, revela limites estruturais de uma cidade planejada de primeira geração.
 A análise mostrou que a combinação entre alta densidade residencial, circulação pouco flexível e falta de espaços comunitários se torna mais crítica com o tempo.
 O estudo indica que Jeongja deixou de ser uma “cidade planejada acabada” e entrou numa fase de reconfiguração, em que é necessário redesenhar funções urbanas e escalas de vida cotidiana.`,
+
+    tagsKo: ["#계획도시", "#도시재생", "#노후주거"],
+    tagsPt: ["#CidadePlanejada", "#RequalificaçãoUrbana", "#HabitaçãoEnvelhecida"],
+    conclusionKo: "이 분석은 정자동이 더 이상 완성형 계획도시가 아니라 재구상이 필요한 단계에 있음을 보여준다.",
+    conclusionPt: "A análise mostra que Jeongja deixou de ser um projeto urbano concluído e entrou numa fase que exige reconfiguração.",
   },
+
   {
     image: "/uploads/project_1.png",
     titleKo: "프랑스 사회주택의 HLM정책",
@@ -71,7 +87,13 @@ O estudo indica que Jeongja deixou de ser uma “cidade planejada acabada” e e
     descriptionPt: `O sistema de habitação social francês (HLM) vai além do apoio à baixa renda: é um instrumento de política urbana voltado à mistura social e à estabilidade habitacional.
 No estudo, analisei a formação histórica do HLM, a estrutura de gestão por instituições públicas e paraestatais, os mecanismos de regulação de aluguel e os critérios de alocação voltados à “mixité sociale”.
 A pesquisa mostra que a habitação social na França funciona como uma ferramenta central de planejamento urbano para reduzir desigualdades e reorganizar o equilíbrio espacial nas cidades.`,
+
+    tagsKo: ["#사회주택", "#도시불평등", "#공공정책"],
+    tagsPt: ["#HabitaçãoSocial", "#DesigualdadeUrbana", "#PolíticaPública"],
+    conclusionKo: "이 연구는 HLM이 단순 복지가 아니라 도시 불평등을 조정하는 핵심 도시계획 도구임을 확인한다.",
+    conclusionPt: "O estudo confirma que o sistema HLM é um instrumento central de planejamento para reduzir desigualdades urbanas.",
   },
+
   {
     image: "/uploads/project_4.png",
     titleKo: "포르투갈 골든비자 정책이 부동산 가격에 미친 영향",
@@ -80,8 +102,13 @@ A pesquisa mostra que a habitação social na França funciona como uma ferramen
 조사 과정에서 외국인 투자 확대가 지역 주민의 주거 접근성을 약화시키고, 도시 중심부에서의 인구 교체와 기능 변화가 가속화되는 글로벌형 젠트리피케이션으로 이어진다는 점을 확인했습니다.
 또한 한국의 규제 중심 부동산 정책과 비교했을 때, 포르투갈은 투자 유치의 부작용이 도시 불평등으로 직결되는 구조적 취약성을 갖고 있으며, 이는 주거 안정성과 도시 지속가능성을 동시에 고민해야 함을 시사합니다.`,
     descriptionPt: `O programa de Golden Visa em Portugal tornou-se um caso emblemático de como a atração de capitais estrangeiros pode concentrar investimentos em áreas centrais e pressionar fortemente os preços dos imóveis.
-A pesquisa mostrou que a expansão desse tipo de investimento reduz o acesso à moradia para residentes locais e acelera processos de gentrificação globalizada nos centros urbanos.
+A pesquisa mostrou que a expansão desse tipo de investimento reduz o acesso à habitação para residentes locais e acelera processos de gentrificação globalizada nos centros urbanos.
 Em comparação com o modelo mais regulatório da Coreia, o caso português revela uma vulnerabilidade estrutural: os benefícios da atração de capital podem ser rapidamente convertidos em maior desigualdade urbana, exigindo políticas que conciliem investimento, estabilidade habitacional e sustentabilidade urbana.`,
+
+    tagsKo: ["#외국자본", "#젠트리피케이션", "#주거접근성"],
+    tagsPt: ["#CapitalEstrangeiro", "#Gentrificação", "#AcessoHabitacional"],
+    conclusionKo: "이 연구는 골든비자 정책이 도시 불평등을 심화시키며 주거 접근성을 약화시키는 구조적 문제를 드러낸다.",
+    conclusionPt: "O estudo revela que o Golden Visa intensifica desigualdades urbanas e reduz o acesso à habitação para residentes locais.",
   },
 ]
 
@@ -100,34 +127,50 @@ export function Projects() {
         <h1 className="text-3xl font-bold tracking-tight mb-2">
           {sectionTitle}
         </h1>
+
         {sectionSubtitle && (
-          <p className="text-gray-500 whitespace-pre-line">
-            {sectionSubtitle}
-          </p>
+          <p className="text-gray-500 whitespace-pre-line">{sectionSubtitle}</p>
         )}
       </header>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {PROJECTS.map((item, idx) => (
-          <div
-            key={idx}
-            className="rounded-xl overflow-hidden shadow-md border hover:shadow-lg transition bg-white"
-          >
-            <img
-              src={item.image}
-              alt={isPT ? item.titlePt : item.titleKo}
-              className="w-full h-48 object-cover"
-            />
-            <div className="p-5">
-              <h3 className="text-lg font-semibold mb-2">
-                {isPT ? item.titlePt : item.titleKo}
-              </h3>
-              <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
-                {isPT ? item.descriptionPt : item.descriptionKo}
-              </p>
+        {PROJECTS.map((item, idx) => {
+          const title = isPT ? item.titlePt : item.titleKo
+          const desc = isPT ? item.descriptionPt : item.descriptionKo
+          const tags = isPT ? item.tagsPt : item.tagsKo
+          const conclusion = isPT ? item.conclusionPt : item.conclusionKo
+
+          return (
+            <div
+              key={idx}
+              className="rounded-xl overflow-hidden shadow-md border hover:shadow-lg transition bg-white"
+            >
+              <img
+                src={item.image}
+                alt={title}
+                className="w-full h-48 object-cover"
+              />
+
+              <div className="p-5">
+                <h3 className="text-lg font-semibold mb-2">{title}</h3>
+
+                <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
+                  {desc}
+                </p>
+
+                {/* 🔵 태그 */}
+                <div className="mt-3 text-xs text-primary font-medium">
+                  {tags.join(" ")}
+                </div>
+
+                {/* 🔵 결론 문장 강조 */}
+                <p className="text-sm text-gray-900 font-semibold mt-3">
+                  {conclusion}
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </section>
   )
