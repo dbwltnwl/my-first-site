@@ -8,11 +8,16 @@ import {
   GraduationCap,
   Award,
   Globe,
-  Target,
-  Lightbulb,
+  Search,
+  Heart,
+  Coffee,
+  Book,
   Plus,
   X,
   Settings,
+  Calendar,
+  Building,
+  User,
   Trophy,
   Sparkles,
   Brain,
@@ -35,7 +40,6 @@ import {
   Lock,
   Key,
   Eye,
-  Search,
   Filter,
   Edit,
   FileText,
@@ -52,13 +56,7 @@ import {
   Volume2,
   Headphones,
   Radio,
-  Heart,
   Shield,
-  Building,
-  Calendar,
-  Book,
-  Coffee,
-  User,
 } from "lucide-react"
 import { EditableText } from "@/components/editable/editable-text"
 import { EditableMedia } from "@/components/editable/editable-media"
@@ -76,6 +74,7 @@ const ABOUT_PT_TEXT = {
   hobbiesTitle: "Hobbies & interesses",
   storyTitle: "Minha história",
 
+  // 경험 카드 설명 (역할/포지션)
   experienceDescriptions: [
     "Graduação em Estudos Portugueses e Brasileiros | 3º ano",
     "Intercâmbio focado em língua, cultura e pesquisa sobre cidade e mercado imobiliário",
@@ -84,6 +83,7 @@ const ABOUT_PT_TEXT = {
     "Experiência como mentora no clube do curso, apoiando estudantes mais novos em estudos, carreira e intercâmbio.",
   ],
 
+  // 핵심 역량 제목/설명
   skillTitles: [
     "Pesquisa urbana e imobiliária em perspectiva internacional",
     "Compreensão de políticas urbanas e imobiliárias",
@@ -95,6 +95,7 @@ const ABOUT_PT_TEXT = {
     "Interpreta políticas, problemas urbanos e dados de mercado em português, com foco no contexto brasileiro.",
   ],
 
+  // 나의 이야기 문단들 (마지막: 앞으로의 방향)
   storyParagraphs: [
     "Comecei estudando língua, cultura e modos de vida nas aulas de Estudos Portugueses e Brasileiros.",
     "Mas, quando tentei entender as estruturas da cidade e do mercado imobiliário, percebi limites que meu curso sozinho não conseguia explicar completamente.",
@@ -215,8 +216,8 @@ const DEFAULT_INFO = {
     },
     {
       icon: "user",
-      title: "포르투갈·브라질학과 동아리 멘토",
-      period: "2024-2 ~",
+      title: "학과 동아리 멘토",
+      period: "2024-2~",
       description: "학업·전공·교환 준비 멘토링 진행",
     },
   ],
