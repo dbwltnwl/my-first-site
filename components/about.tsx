@@ -274,15 +274,16 @@ export function About() {
         icon: "award",
         title: "투자자산운용사",
         period: "2025년 제43회 합격",
-        description: "",
+        description: "부동산/도시 금융 이해를 위한 자격 취득",
       },
       {
         icon: "award",
         title: "FLEX (Foreign Language EXamination)",
         period: "2023-2",
-        description: "",
+        description: "포르투갈어 전문성 인증",
       },
       {
+      icon: "user",
       title: "학과 동아리 멘토",
       period: "2024-2~",
       description: "학업·전공·교환 준비 멘토링 진행",
