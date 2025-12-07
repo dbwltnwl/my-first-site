@@ -57,13 +57,23 @@ import {
   Headphones,
   Radio,
   Shield,
+  Target,
+  Lightbulb,
 } from "lucide-react"
 import { EditableText } from "@/components/editable/editable-text"
 import { EditableMedia } from "@/components/editable/editable-media"
 import { EditableBackground } from "@/components/editable/editable-background"
 import { useInlineEditor } from "@/contexts/inline-editor-context"
 import { COMMON_STYLES } from "@/lib/constants"
-import { useLanguage } from "@/contexts/language-context"
+
+// ===== 언어 타입 & 초기값 =====
+type SiteLang = "ko" | "pt"
+
+const getInitialLang = (): SiteLang => {
+  if (typeof window === "undefined") return "ko"
+  const stored = window.localStorage.getItem("site-lang")
+  return stored === "pt" ? "pt" : "ko"
+}
 
 // ---------- 포르투갈어 고정 텍스트 ----------
 const ABOUT_PT_TEXT = {
@@ -255,7 +265,9 @@ const DEFAULT_INFO = {
 
 export function About() {
   const { getData, saveData, isEditMode, saveToFile } = useInlineEditor()
-  const { lang } = useLanguage()
+
+  // 언어 상태 (로컬에서 관리)
+  const [lang, setLang] = useState<SiteLang>(() => getInitialLang())
   const isPT = lang === "pt"
 
   const [aboutInfo, setAboutInfo] = useState<any>(DEFAULT_INFO)
@@ -265,6 +277,13 @@ export function About() {
   const [showCareerModal, setShowCareerModal] = useState(false)
   const [showSkillModal, setShowSkillModal] = useState(false)
   const [showHobbyModal, setShowHobbyModal] = useState(false)
+
+  // 언어 변경 시 localStorage 저장
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("site-lang", lang)
+    }
+  }, [lang])
 
   // 저장된 데이터 불러오기
   useEffect(() => {
@@ -289,7 +308,11 @@ export function About() {
     saveData("about-info", newInfo)
   }
 
-  const updateExperienceCard = (index: number, field: string, value: string) => {
+  const updateExperienceCard = (
+    index: number,
+    field: string,
+    value: string,
+  ) => {
     const newCards = [...aboutInfo.experienceCards]
     newCards[index] = { ...newCards[index], [field]: value }
     updateAboutInfo("experienceCards", newCards)
@@ -388,8 +411,35 @@ export function About() {
     >
       <section id="about" className="w-full">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* 섹션 제목 */}
+          {/* 섹션 제목 + 언어 토글 */}
           <div className="text-center mb-16">
+            <div className="mb-4 flex justify-center">
+              <div className="inline-flex items-center rounded-full border bg-background px-1 py-0.5 text-xs">
+                <button
+                  type="button"
+                  onClick={() => setLang("ko")}
+                  className={`px-3 py-1 rounded-full ${
+                    !isPT
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  KO
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLang("pt")}
+                  className={`px-3 py-1 rounded-full ${
+                    isPT
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  PT
+                </button>
+              </div>
+            </div>
+
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
               <EditableText
                 value={isPT ? ABOUT_PT_TEXT.title : aboutInfo.title}
@@ -410,8 +460,7 @@ export function About() {
           {/* 경험 카드 */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
             {aboutInfo.experienceCards?.map((card: any, index: number) => {
-              const Icon =
-                AVAILABLE_ICONS[card.icon] || Briefcase
+              const Icon = AVAILABLE_ICONS[card.icon] || Briefcase
               const descriptionText = isPT
                 ? ABOUT_PT_TEXT.experienceDescriptions[index] ??
                   card.description
@@ -500,8 +549,7 @@ export function About() {
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {aboutInfo.skills.map((skill: any, index: number) => {
-                  const Icon =
-                    SKILL_ICONS[skill.icon] || Trophy
+                  const Icon = SKILL_ICONS[skill.icon] || Trophy
                   const titleText = isPT
                     ? ABOUT_PT_TEXT.skillTitles[index] ?? skill.title
                     : skill.title
@@ -637,44 +685,45 @@ export function About() {
           )}
 
           {/* 취미 & 관심사 */}
-          {(aboutInfo.hobbies.length > 0 || isEditMode) && (
-            <div className="mt-16 text-center">
-              <h3 className="text-2xl font-bold text-foreground mb-8">
-                {isPT ? ABOUT_PT_TEXT.hobbiesTitle : "취미 & 관심사"}
-              </h3>
-              <div className="flex flex-wrap justify-center gap-3">
-                {aboutInfo.hobbies.map((hobby: string, index: number) => (
-                  <span
-                    key={index}
-                    className="px-4 py-2 bg-primary/10 text-primary rounded-full text-sm relative group flex items-center justify-center"
-                  >
-                    {isEditMode && (
-                      <button
-                        onClick={() => removeHobby(index)}
-                        className={`${COMMON_STYLES.deleteButton} opacity-0 group-hover:opacity-100 transition-opacity`}
-                      >
-                        <X className={COMMON_STYLES.deleteIcon} />
-                      </button>
-                    )}
-                    <EditableText
-                      value={hobby}
-                      onChange={(value) => updateHobby(index, value)}
-                      storageKey={`about-hobby-${index}`}
-                    />
-                  </span>
-                ))}
-                {isEditMode && (
-                  <button
-                    onClick={() => setShowHobbyModal(true)}
-                    className="px-4 py-2 border border-dashed border-muted-foreground/30 rounded-full text-sm hover:border-primary transition-all"
-                  >
-                    <Settings className="h-4 w-4 inline mr-1" />
-                    편집
-                  </button>
-                )}
+          {(aboutInfo.hobbies.length > 0 || isEditMode) &&
+            aboutInfo.hobbies && (
+              <div className="mt-16 text-center">
+                <h3 className="text-2xl font-bold text-foreground mb-8">
+                  {isPT ? ABOUT_PT_TEXT.hobbiesTitle : "취미 & 관심사"}
+                </h3>
+                <div className="flex flex-wrap justify-center gap-3">
+                  {aboutInfo.hobbies.map((hobby: string, index: number) => (
+                    <span
+                      key={index}
+                      className="px-4 py-2 bg-primary/10 text-primary rounded-full text-sm relative group flex items-center justify-center"
+                    >
+                      {isEditMode && (
+                        <button
+                          onClick={() => removeHobby(index)}
+                          className={`${COMMON_STYLES.deleteButton} opacity-0 group-hover:opacity-100 transition-opacity`}
+                        >
+                          <X className={COMMON_STYLES.deleteIcon} />
+                        </button>
+                      )}
+                      <EditableText
+                        value={hobby}
+                        onChange={(value) => updateHobby(index, value)}
+                        storageKey={`about-hobby-${index}`}
+                      />
+                    </span>
+                  ))}
+                  {isEditMode && (
+                    <button
+                      onClick={() => setShowHobbyModal(true)}
+                      className="px-4 py-2 border border-dashed border-muted-foreground/30 rounded-full text-sm hover:border-primary transition-all"
+                    >
+                      <Settings className="h-4 w-4 inline mr-1" />
+                      편집
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
         </div>
       </section>
 
@@ -693,77 +742,87 @@ export function About() {
             </div>
 
             <div className="space-y-3">
-              {aboutInfo.experienceCards?.map((card: any, index: number) => (
-                <div
-                  key={index}
-                  className="flex items-start gap-3 p-3 border rounded-lg bg-muted/30"
-                >
-                  {/* 아이콘 선택 */}
-                  <select
-                    value={card.icon}
-                    onChange={(e) =>
-                      updateExperienceCard(index, "icon", e.target.value)
-                    }
-                    className="w-40 px-2 py-2 border rounded-lg bg-background"
+              {aboutInfo.experienceCards?.map(
+                (card: any, index: number) => (
+                  <div
+                    key={index}
+                    className="flex items-start gap-3 p-3 border rounded-lg bg-muted/30"
                   >
-                    <option value="briefcase">💼 직장</option>
-                    <option value="graduation">🎓 학교</option>
-                    <option value="award">🏆 수상/자격</option>
-                    <option value="globe">🌍 해외/국제</option>
-                    <option value="book">📚 학문/연구</option>
-                    <option value="building">🏢 기관/조직</option>
-                    <option value="calendar">📅 기간</option>
-                    <option value="heart">❤️ 열정</option>
-                    <option value="coffee">☕ 활동</option>
-                    <option value="user">👤 멘토링/리더십</option>
-                  </select>
-
-                  <div className="flex-1 space-y-2">
-                    <input
-                      type="text"
-                      value={card.title}
+                    {/* 아이콘 선택 */}
+                    <select
+                      value={card.icon}
                       onChange={(e) =>
-                        updateExperienceCard(index, "title", e.target.value)
+                        updateExperienceCard(index, "icon", e.target.value)
                       }
-                      placeholder="예: 단국대학교, 교환학생, 자격증"
-                      className="w-full px-3 py-2 border rounded-lg bg-background font-semibold"
-                    />
+                      className="w-40 px-2 py-2 border rounded-lg bg-background"
+                    >
+                      <option value="briefcase">💼 직장</option>
+                      <option value="graduation">🎓 학교</option>
+                      <option value="award">🏆 수상/자격</option>
+                      <option value="globe">🌍 해외/국제</option>
+                      <option value="book">📚 학문/연구</option>
+                      <option value="building">🏢 기관/조직</option>
+                      <option value="calendar">📅 기간</option>
+                      <option value="heart">❤️ 열정</option>
+                      <option value="coffee">☕ 활동</option>
+                      <option value="user">👤 멘토링/리더십</option>
+                    </select>
 
-                    <div className="flex flex-col gap-2 md:flex-row">
+                    <div className="flex-1 space-y-2">
                       <input
                         type="text"
-                        value={card.period}
-                        onChange={(e) =>
-                          updateExperienceCard(index, "period", e.target.value)
-                        }
-                        placeholder="예: 2023.03 ~ 2027.02"
-                        className="flex-1 px-3 py-2 border rounded-lg bg-background"
-                      />
-
-                      <input
-                        type="text"
-                        value={card.description}
+                        value={card.title}
                         onChange={(e) =>
                           updateExperienceCard(
                             index,
-                            "description",
+                            "title",
                             e.target.value,
                           )
                         }
-                        placeholder="예: 전공/역할/포지션 등"
-                        className="flex-1 px-3 py-2 border rounded-lg bg-background"
+                        placeholder="예: 단국대학교, 교환학생, 자격증"
+                        className="w-full px-3 py-2 border rounded-lg bg-background font-semibold"
                       />
-                    </div>
-                  </div>
 
-                  <button
-                    onClick={() => removeExperienceCard(index)}
-                    className="p-2 text-destructive hover:bg-destructive/10 rounded-lg"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                </div>
-              ))}
+                      <div className="flex flex-col gap-2 md:flex-row">
+                        <input
+                          type="text"
+                          value={card.period}
+                          onChange={(e) =>
+                            updateExperienceCard(
+                              index,
+                              "period",
+                              e.target.value,
+                            )
+                          }
+                          placeholder="예: 2023.03 ~ 2027.02"
+                          className="flex-1 px-3 py-2 border rounded-lg bg-background"
+                        />
+
+                        <input
+                          type="text"
+                          value={card.description}
+                          onChange={(e) =>
+                            updateExperienceCard(
+                              index,
+                              "description",
+                              e.target.value,
+                            )
+                          }
+                          placeholder="예: 전공/역할/포지션 등"
+                          className="flex-1 px-3 py-2 border rounded-lg bg-background"
+                        />
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => removeExperienceCard(index)}
+                      className="p-2 text-destructive hover:bg-destructive/10 rounded-lg"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ),
+              )}
 
               <button
                 onClick={addExperienceCard}
@@ -784,7 +843,11 @@ export function About() {
                 </button>
                 <button
                   onClick={async () => {
-                    const success = await saveToFile("about", "Info", aboutInfo)
+                    const success = await saveToFile(
+                      "about",
+                      "Info",
+                      aboutInfo,
+                    )
                     if (success) {
                       alert("✅ 소개 설정이 파일에 저장되었습니다!")
                       setShowCareerModal(false)
@@ -818,8 +881,7 @@ export function About() {
 
             <div className="space-y-3">
               {aboutInfo.skills.map((skill: any, index: number) => {
-                const Icon =
-                  SKILL_ICONS[skill.icon] || Trophy
+                const Icon = SKILL_ICONS[skill.icon] || Trophy
                 return (
                   <div
                     key={index}
@@ -931,7 +993,11 @@ export function About() {
                 </button>
                 <button
                   onClick={async () => {
-                    const success = await saveToFile("about", "Info", aboutInfo)
+                    const success = await saveToFile(
+                      "about",
+                      "Info",
+                      aboutInfo,
+                    )
                     if (success) {
                       alert("✅ 소개 설정이 파일에 저장되었습니다!")
                       setShowSkillModal(false)
@@ -1051,7 +1117,11 @@ export function About() {
                 </button>
                 <button
                   onClick={async () => {
-                    const success = await saveToFile("about", "Info", aboutInfo)
+                    const success = await saveToFile(
+                      "about",
+                      "Info",
+                      aboutInfo,
+                    )
                     if (success) {
                       alert("✅ 소개 설정이 파일에 저장되었습니다!")
                       setShowHobbyModal(false)
