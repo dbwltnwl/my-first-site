@@ -1,12 +1,14 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import * as React from "react"
 import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import {
-  Briefcase,
-  GraduationCap,
-  Award,
+Briefcase,
+GraduationCap,
+Award,
+  School,
   Globe,
   Search,
   Heart,
@@ -19,8 +21,12 @@ import {
   Building,
   User,
   Trophy,
+  Star,
+Lightbulb,
+  Target,
+  Rocket,
+  Shield,
   Sparkles,
-  Brain,
   Code,
   Database,
   Palette,
@@ -29,6 +35,7 @@ import {
   LineChart,
   PieChart,
   Activity,
+  Brain,
   Cpu,
   Layers,
   Package,
@@ -40,6 +47,7 @@ import {
   Lock,
   Key,
   Eye,
+  Search,
   Filter,
   Edit,
   FileText,
@@ -56,83 +64,115 @@ import {
   Volume2,
   Headphones,
   Radio,
-  Shield,
+  Zap,
+  Globe,
+  Users,
+  TrendingUp,
+  BookOpen,
+  MapPin,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+  Home,
+  School,
 } from "lucide-react"
-
 import { EditableText } from "@/components/editable/editable-text"
 import { EditableMedia } from "@/components/editable/editable-media"
 import { EditableBackground } from "@/components/editable/editable-background"
 import { useInlineEditor } from "@/contexts/inline-editor-context"
 import { COMMON_STYLES } from "@/lib/constants"
-import { useLanguage } from "@/contexts/language-context"
 
-// -------------------------------------------------------------
-// 🔥 포르투갈어 텍스트 (Hero 버튼 누르면 이것만 적용됨)
-// -------------------------------------------------------------
-const PT = {
-  title: "Sobre",
-  subtitle:
-    "Apresente sua formação, experiências e como você enxerga cidade, espaço e pessoas.",
-  skillsTitle: "Competências principais",
-  hobbiesTitle: "Hobbies & interesses",
-  storyTitle: "Minha história",
+type SiteLang = "ko" | "pt"
 
-  experience: [
-    "Graduação em Estudos Portugueses e Brasileiros | 3º ano",
-    "Intercâmbio focado em língua, cultura e pesquisa sobre cidade e mercado imobiliário",
-    "Certificação para aprofundar o entendimento de finanças imobiliárias e urbanas",
-    "Certificação de proficiência em língua portuguesa",
-    "Experiência como mentora no clube do curso, apoiando estudantes mais novos em estudos, carreira e intercâmbio.",
-  ],
+const getInitialLang = (): SiteLang => {
+  if (typeof window === "undefined") return "ko"
+  const stored = window.localStorage.getItem("site-lang")
+  return stored === "pt" ? "pt" : "ko"
+function useSiteLang() {
+  const [lang, setLang] = useState<SiteLang>("ko")
 
-  skillsTitleList: [
-    "Pesquisa urbana e imobiliária em perspectiva internacional",
-    "Compreensão de políticas urbanas e imobiliárias",
-    "Especialização regional em Brasil e países lusófonos",
-  ],
-  skillsDescList: [
-    "Compara estruturas urbanas e problemas habitacionais de diferentes países, como Brasil e Europa.",
-    "Analisa como habitação, renovação urbana, desenvolvimento e infraestrutura impactam a cidade.",
-    "Interpreta políticas, problemas urbanos e dados de mercado em português, com foco no contexto brasileiro.",
-  ],
+  useEffect(() => {
+    if (typeof window === "undefined") return
 
-  story: [
-    "Comecei estudando língua, cultura e modos de vida nas aulas de Estudos Portugueses e Brasileiros.",
-    "Mas, quando tentei entender as estruturas da cidade e do mercado imobiliário, percebi limites que meu curso sozinho não conseguia explicar completamente.",
-    "Para aprender uma outra 'linguagem' da cidade e do espaço, entrei na área de estudos imobiliários. No começo, os termos técnicos e conceitos eram desafiadores, mas esse processo trouxe mudanças importantes.",
-    "Ainda tenho muito o que aprender. Não consigo explicar a cidade por completo, nem afirmar que entendo todos os mecanismos do mercado imobiliário. Mas, justamente por reconhecer essas lacunas, passei a observar com mais cuidado, fazer mais perguntas e ler a cidade em várias camadas.",
-    "Daqui para frente, quero unir português, estudos urbanos e finanças imobiliárias em um único eixo — tornando-me alguém capaz de ler a cidade simultaneamente pela linguagem, pelo capital e pelas políticas públicas.",
-  ],
+    const stored = window.localStorage.getItem("site-lang")
+    if (stored === "ko" || stored === "pt") {
+      setLang(stored)
+    }
+
+    const handler = (e: Event) => {
+      const anyEvent = e as CustomEvent
+      const next = anyEvent.detail?.lang
+      if (next === "ko" || next === "pt") {
+        setLang(next)
+      }
+    }
+
+    window.addEventListener("site-lang-change", handler)
+    return () => window.removeEventListener("site-lang-change", handler)
+  }, [])
+
+  return lang
 }
 
-const SKILL_META = {
-  ko: [
-    "도구: 지도, 통계, 정책 리포트",
-    "접근법: 사례 비교, 리스크 분석",
-    "기반: 포르투갈어 1차 자료 해석",
-  ],
-  pt: [
-    "Ferramentas: mapas, estatísticas, relatórios de políticas públicas",
-    "Abordagem: comparação de casos e análise de risco",
-    "Base: leitura de fontes primárias em português",
-  ],
-}
-
-// 아이콘 목록
-const ICONS: Record<string, any> = {
+type AboutInfo = {
+  title: string
+  subtitle: string
+  story1: string
+  story2: string
+  story3: string
+  story4: string
+  storyImage: string
+// 경험 카드용 아이콘
+const AVAILABLE_ICONS = {
   briefcase: Briefcase,
   graduation: GraduationCap,
   award: Award,
-  globe: Globe,
-  search: Search,
-  heart: Heart,
-  coffee: Coffee,
-  book: Book,
+  trophy: Trophy,
+  star: Star,
+  lightbulb: Lightbulb,
+  target: Target,
+  rocket: Rocket,
+  shield: Shield,
   building: Building,
   calendar: Calendar,
+  book: Book,
+  heart: Heart,
+  coffee: Coffee,
   user: User,
+  zap: Zap,
+  globe: Globe,
+  users: Users,
+  trending: TrendingUp,
+  bookOpen: BookOpen,
+  mapPin: MapPin,
+  clock: Clock,
+  check: CheckCircle,
+  alert: AlertCircle,
+  home: Home,
+  school: School,
+}
+
+const defaultInfo: AboutInfo = {
+  title: "소개",
+  subtitle: "언어와 도시, 그리고 사람의 생활 방식을 함께 바라보며 공간을 이해합니다.",
+  story1:
+    "저는 포르투갈·브라질학과에서 언어와 문화, 그리고 사람의 생활방식을 먼저 배웠습니다. 언어를 통해 사람들의 일상, 관계, 세계를 바라보는 시각이 조금씩 열렸고, 자연스럽게 그들이 살아가는 ‘공간’에 대한 관심으로 이어졌습니다.",
+  story2:
+    "하지만 도시와 부동산의 구조를 이해하려 할 때 제 전공만으로는 설명하기 어려운 지점들이 보이기 시작했습니다. 같은 장소를 보더라도, 언어와 문화의 관점만으로는 읽히지 않는 층위들이 있다는 걸 깨닫게 되었고, 그 지점을 이해하기 위해 부동산학이라는 새로운 언어를 배우기 시작했습니다.",
+  story3:
+    "처음에는 낯선 용어와 개념들에 부딪히며 시행착오도 많았지만, 그 과정에서 도시를 보는 제 시야가 조금씩 달라졌습니다. 한 도시의 가격 구조, 정책, 재생 전략을 함께 보면서, ‘사람이 어떻게 살아가는가’와 ‘도시가 어떻게 작동하는가’를 동시에 연결해 이해하려고 노력하고 있습니다.",
+  story4:
+    "물론 저는 여전히 도시와 부동산을 완벽하게 설명할 수 있는 단계는 아닙니다. 하지만 이런 부족함 때문에 멈추기보다는, 더 깊이 관찰하고 더 많이 질문하며, 도시를 구성하는 여러 층위를 천천히 읽어나가고 있습니다. 이 포트폴리오는 그런 시도들의 기록입니다.",
+  storyImage: "",
+// 스킬용 아이콘
+const SKILL_ICONS = {
   trophy: Trophy,
   sparkles: Sparkles,
+  target: Target,
+  rocket: Rocket,
+  star: Star,
+  zap: Zap,
+  lightbulb: Lightbulb,
   brain: Brain,
   code: Code,
   database: Database,
@@ -153,6 +193,7 @@ const ICONS: Record<string, any> = {
   lock: Lock,
   key: Key,
   eye: Eye,
+  search: Search,
   filter: Filter,
   edit: Edit,
   fileText: FileText,
@@ -169,345 +210,1229 @@ const ICONS: Record<string, any> = {
   volume: Volume2,
   headphones: Headphones,
   radio: Radio,
+  heart: Heart,
   shield: Shield,
+  globe: Globe,
+  users: Users,
 }
 
-// -------------------------------------------------------------
-// 🔥 기본 데이터
-// -------------------------------------------------------------
-const DEFAULT = {
-  title: "소개",
-  subtitle: "당신의 전문성과 열정을 소개해주세요.",
-  background: { image: "", video: "", color: "", opacity: 0.1 },
-
-  experienceCards: [
+// 포르투갈어 버전 텍스트
+const ABOUT_PT = {
+// 🔹 포르투갈어 버전 텍스트
+const ABOUT_PT_TEXT = {
+title: "Sobre mim",
+subtitle:
+    "Estudo línguas, cidades e formas de vida urbana para compreender como o espaço é produzido.",
+  story1:
+    "Sou estudante do Departamento de Português e Estudos Brasileiros. A partir da língua e da cultura, comecei a observar o cotidiano, as relações e as formas de viver das pessoas, e isso naturalmente me levou a me interessar pelos espaços em que elas habitam.",
+  story2:
+    "Quando tentei entender as estruturas das cidades e do mercado imobiliário, percebi que apenas a minha formação em língua e cultura não era suficiente. Havia camadas da cidade que não se explicavam apenas pela dimensão cultural, e por isso comecei a aprender uma nova linguagem: a do mercado imobiliário e das políticas urbanas.",
+  story3:
+    "No início, muitos conceitos e termos eram estranhos, mas esse processo mudou pouco a pouco a forma como enxergo a cidade. Tenho buscado conectar preços, políticas, projetos de renovação urbana e formas de moradia para entender, ao mesmo tempo, como as pessoas vivem e como a cidade funciona.",
+  story4:
+    "Ainda estou longe de explicar completamente a cidade ou o mercado imobiliário. Mas, em vez de parar por causa dessa falta, escolhi observar com mais calma, fazer mais perguntas e ler lentamente as múltiplas camadas que compõem o espaço urbano. Este portfólio é um registro dessas tentativas.",
+    "Apresento aqui minha formação, interesses e o caminho que estou construindo entre cidades, línguas e mercado imobiliário.",
+  experience: [
     {
-      icon: "briefcase",
-      title: "단국대학교",
-      period: "2023.03 ~ 2027.02 (예정)",
-      description: "포르투갈·브라질학 전공 | 3학년",
+      title: "Universidade Dankook",
+      period: "03.2023 ~ 02.2027 (previsto)",
+      description: "Graduação em Português e Estudos Brasileiros",
     },
     {
-      icon: "graduation",
-      title: "포르투갈 교환학생",
-      period: "2024.02 ~ 2024.07",
-      description: "언어·문화 + 도시/부동산 리서치 기반 탐색",
+      title: "Intercâmbio em Portugal",
+      period: "02.2024 ~ 07.2024",
+      description: "Universidade de Coimbra",
     },
     {
-      icon: "award",
-      title: "투자자산운용사",
-      period: "2025년 제43회 합격",
-      description: "부동산/도시 금융 이해를 위한 자격 취득",
+      title: "Certificado de Gestora de Investimentos",
+      period: "43ª edição (2025)",
+      description: "",
     },
     {
-      icon: "award",
-      title: "FLEX (Foreign Language Examination)",
+      title: "FLEX (Foreign Language EXamination)",
       period: "2023-2",
-      description: "포르투갈어 전문성 인증",
-    },
-    {
-      icon: "user",
-      title: "학과 동아리 멘토",
-      period: "2024-2~",
-      description: "학업·전공·교환 준비 멘토링 진행",
+      description: "",
     },
   ],
-
   skills: [
     {
-      icon: "globe",
-      title: "국제적 관점의 도시·부동산 연구",
+      title: "Pesquisa urbana e imobiliária em perspectiva internacional",
       description:
-        "브라질·유럽 등 다양한 국가의 도시 구조와 주거 문제를 비교·분석합니다.",
+        "Comparo estruturas urbanas e problemas habitacionais em diferentes países.",
     },
     {
-      icon: "search",
-      title: "부동산 및 도시 정책 이해",
+      title: "Compreensão de políticas urbanas e imobiliárias",
       description:
-        "주거, 재생, 개발, 인프라 등 도시를 둘러싼 구조와 정책의 영향을 함께 살펴봅니다.",
+        "Analiso como habitação, requalificação, desenvolvimento e infraestrutura se articulam nas cidades.",
     },
     {
-      icon: "lightbulb",
-      title: "지역 전문성",
+      title: "Especialização regional",
       description:
-        "브라질 현지 정책, 도시 문제, 시장 자료를 포르투갈어 기반으로 해석·정리합니다.",
+        "Interpreto políticas, questões urbanas e dados de mercado brasileiros com base em fontes em português.",
     },
   ],
-
-  storyTitle: "나의 이야기",
+  storyTitle: "Minha trajetória",
   story: [
-    "저는 포르투갈·브라질학과에서 언어와 문화, 그리고 사람의 생활방식을 먼저 배웠습니다.",
-    "하지만 도시와 부동산의 구조를 이해하려 할 때 제 전공만으로는 설명하기 어려운 지점들이 생겼습니다.",
-    "그래서 부동산학이라는 또 다른 ‘도시의 언어’를 배우기 시작했습니다.",
-    "여전히 부족하지만, 그 부족함이 저를 더 깊게 관찰하고 질문하게 만들었습니다.",
-    "앞으로는 포르투갈어·도시 연구·부동산 금융을 묶어 도시를 ‘언어·자본·정책’으로 읽는 사람이 되고자 합니다.",
+    "Comecei estudando português, cultura e modos de vida em países lusófonos no curso de Estudos Portugueses e Brasileiros.",
+    "Mas, ao tentar entender a estrutura das cidades e do mercado imobiliário, percebi que só o meu curso de origem não explicava todos os pontos que eu via na realidade.",
+    "Para aprender uma nova “língua” que explicasse cidade e espaço, entrei na área de estudos imobiliários. No início, enfrentei muitos termos e conceitos desconhecidos, mas esse processo trouxe mudanças importantes na forma como observo o mundo urbano.",
+    "Ainda tenho muito o que aprender. Não consigo explicar completamente a cidade nem entendo todos os mecanismos do mercado imobiliário. Mesmo assim, não paro por causa dessas faltas. Pelo contrário, elas me fazem observar com mais cuidado, fazer mais perguntas e ler, com calma, as várias camadas que compõem a cidade.",
   ],
-
-  storyImage: "",
-  hobbies: ["✈️ 여행"],
+  hobbiesTitle: "Interesses & hobbies",
 }
 
-// -------------------------------------------------------------
-// 🔥 COMPONENT
-// -------------------------------------------------------------
 export function About() {
   const { getData, saveData, isEditMode } = useInlineEditor()
-  const { lang } = useLanguage()
+
+  const [lang, setLang] = useState<SiteLang>(getInitialLang)
+  const [aboutInfo, setAboutInfo] = useState<AboutInfo>(defaultInfo)
+  const [backgroundData, setBackgroundData] = useState<{
+    image: string
+    video: string
+    color: string
+    opacity: number
+  }>({
+    image: "",
+    video: "",
+    color: "",
+    opacity: 0.1,
+  })
+
   const isPT = lang === "pt"
+  const { getData, saveData, isEditMode, saveToFile } = useInlineEditor()
+  const lang = useSiteLang()
+  const isPT = !isEditMode && lang === "pt"
 
-  const [info, setInfo] = useState(DEFAULT)
-  const [bg, setBg] = useState(DEFAULT.background)
-
-  // 저장 데이터 불러오기
-  useEffect(() => {
-    const saved = getData("about-info")
-    if (saved) setInfo({ ...DEFAULT, ...saved })
-
-    const savedBg = getData("about-background")
-    if (savedBg) setBg(savedBg)
-  }, [getData, isEditMode])
-
-  // 언어 전환 적용
-  useEffect(() => {
-    if (isPT) {
-      setInfo((prev) => ({
-        ...prev,
-        title: PT.title,
-        subtitle: PT.subtitle,
-        storyTitle: PT.storyTitle,
-        experienceCards: prev.experienceCards.map((c, i) => ({
-          ...c,
-          description: PT.experience[i] || c.description,
-        })),
-        skills: prev.skills.map((s, i) => ({
-          ...s,
-          title: PT.skillsTitleList[i] || s.title,
-          description: PT.skillsDescList[i] || s.description,
-        })),
-        story: PT.story,
-      }))
-    } else {
-      // 한국어로 복구
-      setInfo(DEFAULT)
-    }
-  }, [isPT])
-
-  const update = (key: string, val: any) => {
-    const newInfo = { ...info, [key]: val }
-    setInfo(newInfo)
-    saveData("about-info", newInfo)
+  // 기본 데이터 (한국어 버전)
+  const defaultInfo = {
+    title: "소개",
+    subtitle: "당신의 전문성과 열정을 소개해주세요.",
+    background: { image: "", video: "", color: "", opacity: 0.1 },
+    experienceCards: [
+      {
+        icon: "briefcase",
+        title: "단국대학교",
+        period: "2023.03 ~ 2027.02 (예정)",
+        description: "포르투갈·브라질학 전공",
+      },
+      {
+        icon: "graduation",
+        title: "포르투갈 교환학생",
+        period: "2024.02 ~ 2024.07",
+        description: "University of Coimbra",
+      },
+      {
+        icon: "award",
+        title: "투자자산운용사",
+        period: "2025년 제43회 합격",
+        description: "",
+      },
+      {
+        icon: "award",
+        title: "FLEX (Foreign Language EXamination)",
+        period: "2023-2",
+        description: "",
+      },
+    ],
+    skills: [
+      {
+        icon: "globe",
+        title: "국제적 관점의 도시·부동산 연구",
+        description: "브라질·유럽 등 다양한 국가의 도시 구조와 주거 문제를 비교·분석합니다.",
+      },
+      {
+        icon: "search",
+        title: "부동산 및 도시 정책 이해",
+        description:
+          "주거, 재생, 개발, 인프라 등 도시를 둘러싼 구조와 정책의 영향을 함께 살펴봅니다.",
+      },
+      {
+        icon: "lightbulb",
+        title: "지역 전문성",
+        description:
+          "브라질 현지 정책, 도시 문제, 시장 자료를 포르투갈어 기반으로 해석·정리합니다.",
+      },
+    ],
+    storyTitle: "나의 이야기",
+    story: [
+      "저는 포르투갈·브라질학과에서 언어와 문화, 그리고 사람의 생활방식을 먼저 배웠습니다.",
+      "하지만 도시와 부동산의 구조를 이해하려 할 때 제 전공만으로는 설명하기 어려운 지점들이 자연스럽게 보이기 시작했습니다.",
+      "도시와 공간을 이해하는 또 하나의 언어를 배우기 위해 저는 부동산학이라는 영역에 발을 들였습니다. 처음에는 낯선 용어와 개념들에 부딪히며 시행착오도 많았지만, 그 과정에서 중요한 변화를 경험했습니다.",
+      "물론 저는 여전히 부족한 점이 많습니다. 도시를 완벽하게 설명할 수 있는 것도 아니고, 부동산 시장의 모든 원리를 이해한 것도 아닙니다. 그러나 저는 이런 부족함 때문에 멈추지 않습니다. 오히려 더 깊이 관찰하고 더 많이 질문하며, 도시를 구성하는 여러 층위를 천천히 읽어나갈 수 있게 되었습니다.",
+    ],
+    storyImage: "",
+    hobbies: ["✈️ 여행"],
   }
 
-  return (
-    <EditableBackground
-      image={bg.image}
-      video={bg.video}
-      color={bg.color}
-      opacity={bg.opacity}
-      onChange={(d) => {
-        const newBg = { ...bg, ...d }
-        setBg(newBg)
-        saveData("about-background", newBg)
-      }}
-      storageKey="about-background"
-      className="py-20"
-    >
-      <section id="about" className="max-w-6xl mx-auto px-6">
+  const [aboutInfo, setAboutInfo] = useState(defaultInfo)
+  const [backgroundData, setBackgroundData] = useState(defaultInfo.background)
+  const [showCareerModal, setShowCareerModal] = useState(false)
+  const [showSkillModal, setShowSkillModal] = useState(false)
+  const [showHobbyModal, setShowHobbyModal] = useState(false)
 
-        {/* ===== 제목 / 소개 ===== */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-foreground mb-4">
-            <EditableText
-              value={info.title}
-              onChange={(v) => update("title", v)}
-              storageKey="about-title"
-            />
-          </h2>
+  // 데이터 로드
+useEffect(() => {
+    const savedData = getData("about-info") as
+      | (Partial<AboutInfo> & { background?: any })
+      | null
+    const savedData = getData("about-info") as typeof defaultInfo | null
+if (savedData) {
+setAboutInfo({ ...defaultInfo, ...savedData })
+if (savedData.background) {
+setBackgroundData(savedData.background as any)
+}
+}
+    const savedBg = getData("about-background") as
+      | { image: string; video: string; color: string; opacity: number }
+      | null
+    if (savedBg) setBackgroundData(savedBg)
 
-          <p className="text-lg text-muted-foreground leading-relaxed">
-            <EditableText
-              value={info.subtitle}
-              onChange={(v) => update("subtitle", v)}
-              storageKey="about-subtitle"
-              multiline
-            />
-          </p>
-        </div>
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail as SiteLang
+      setLang(detail)
+    }
+    if (typeof window !== "undefined") {
+      setLang(getInitialLang())
+      window.addEventListener("site-lang-change", handler as EventListener)
+    const savedBg = getData("about-background") as {
+      image: string
+      video: string
+      color: string
+      opacity: number
+    } | null
+    if (savedBg) {
+      setBackgroundData(savedBg)
+}
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("site-lang-change", handler as EventListener)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEditMode])
+  }, [getData, isEditMode])
 
-        {/* ===== 경험 카드 ===== */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-          {info.experienceCards.map((card, i) => {
-            const Icon = ICONS[card.icon] || Briefcase
+  const updateAboutInfo = (key: keyof AboutInfo, value: string) => {
+  const updateAboutInfo = (key: keyof typeof defaultInfo, value: any) => {
+const newInfo = { ...aboutInfo, [key]: value }
+setAboutInfo(newInfo)
+saveData("about-info", newInfo)
+}
 
-            return (
-              <Card key={i} className="shadow-md relative">
-                <CardContent className="p-6">
-                  {isEditMode && (
-                    <button
-                      onClick={() =>
-                        update(
-                          "experienceCards",
-                          info.experienceCards.filter((_, idx) => idx !== i),
-                        )
-                      }
-                      className={COMMON_STYLES.deleteButton}
-                    >
-                      <X className={COMMON_STYLES.deleteIcon} />
-                    </button>
-                  )}
+  const titleText = isPT ? ABOUT_PT.title : aboutInfo.title
+  const subtitleText = isPT ? ABOUT_PT.subtitle : aboutInfo.subtitle
+  const updateExperienceCard = (index: number, field: string, value: string) => {
+    const newCards = [...aboutInfo.experienceCards]
+    newCards[index] = { ...newCards[index], [field]: value }
+    updateAboutInfo("experienceCards", newCards)
+  }
 
-                  <div className="flex space-x-4">
-                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                      <Icon className="w-6 h-6 text-primary" />
-                    </div>
+  const addExperienceCard = () => {
+    updateAboutInfo("experienceCards", [
+      ...aboutInfo.experienceCards,
+      {
+        icon: "briefcase",
+        title: "새 경험",
+        period: "2024",
+        description: "설명을 입력하세요",
+      },
+    ])
+  }
 
-                    <div className="flex-1">
-                      <h3 className="font-semibold">
-                        <EditableText
-                          value={card.title}
-                          onChange={(v) => {
-                            const arr = [...info.experienceCards]
-                            arr[i].title = v
-                            update("experienceCards", arr)
-                          }}
-                          storageKey={`exp-title-${i}`}
-                        />
-                      </h3>
+  const removeExperienceCard = (index: number) => {
+    updateAboutInfo(
+      "experienceCards",
+      aboutInfo.experienceCards.filter((_, i) => i !== index)
+    )
+  }
 
-                      <p className="text-sm text-primary mb-1">
-                        <EditableText
-                          value={card.period}
-                          onChange={(v) => {
-                            const arr = [...info.experienceCards]
-                            arr[i].period = v
-                            update("experienceCards", arr)
-                          }}
-                          storageKey={`exp-period-${i}`}
-                        />
-                      </p>
+  const updateSkill = (index: number, field: string, value: string) => {
+    const newSkills = [...aboutInfo.skills]
+    newSkills[index] = { ...newSkills[index], [field]: value }
+    updateAboutInfo("skills", newSkills)
+  }
 
-                      <p className="text-sm text-muted-foreground">
-                        <EditableText
-                          value={card.description}
-                          onChange={(v) => {
-                            const arr = [...info.experienceCards]
-                            arr[i].description = v
-                            update("experienceCards", arr)
-                          }}
-                          storageKey={`exp-desc-${i}`}
-                        />
-                      </p>
-                    </div>
+  const addSkill = () => {
+    updateAboutInfo("skills", [
+      ...aboutInfo.skills,
+      { icon: "star", title: "새 스킬", description: "스킬 설명" },
+    ])
+  }
+
+  const removeSkill = (index: number) => {
+    updateAboutInfo(
+      "skills",
+      aboutInfo.skills.filter((_, i) => i !== index)
+    )
+  }
+
+  const story1 = isPT ? ABOUT_PT.story1 : aboutInfo.story1
+  const story2 = isPT ? ABOUT_PT.story2 : aboutInfo.story2
+  const story3 = isPT ? ABOUT_PT.story3 : aboutInfo.story3
+  const story4 = isPT ? ABOUT_PT.story4 : aboutInfo.story4
+  const updateStory = (index: number, value: string) => {
+    const newStory = [...aboutInfo.story]
+    newStory[index] = value
+    updateAboutInfo("story", newStory)
+  }
+
+  const addStory = () => {
+    updateAboutInfo("story", [...aboutInfo.story, "새로운 문단"])
+  }
+
+  const removeStory = (index: number) => {
+    updateAboutInfo(
+      "story",
+      aboutInfo.story.filter((_, i) => i !== index)
+    )
+  }
+
+  const updateHobby = (index: number, value: string) => {
+    const newHobbies = [...aboutInfo.hobbies]
+    newHobbies[index] = value
+    updateAboutInfo("hobbies", newHobbies)
+  }
+
+  const addHobby = () => {
+    updateAboutInfo("hobbies", [...aboutInfo.hobbies, "🎯 새 취미"])
+  }
+
+  const removeHobby = (index: number) => {
+    updateAboutInfo(
+      "hobbies",
+      aboutInfo.hobbies.filter((_, i) => i !== index)
+    )
+  }
+
+return (
+<EditableBackground
+@@ -138,8 +431,9 @@ export function About() {
+setBackgroundData(newData)
+saveData("about-background", newData)
+
+        const updated = { ...aboutInfo, background: newData as any }
+        saveData("about-info", updated)
+        const updatedAboutInfo = { ...aboutInfo, background: newData }
+        setAboutInfo(updatedAboutInfo)
+        saveData("about-info", updatedAboutInfo)
+}}
+storageKey="about-background"
+className="py-20 bg-muted/30 relative"
+@@ -150,14 +444,14 @@ export function About() {
+<div className="text-center mb-16">
+<h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
+<EditableText
+                value={titleText}
+                value={isPT ? ABOUT_PT_TEXT.title : aboutInfo.title}
+onChange={(value) => updateAboutInfo("title", value)}
+storageKey="about-title"
+/>
+</h2>
+<p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+<EditableText
+                value={subtitleText}
+                value={isPT ? ABOUT_PT_TEXT.subtitle : aboutInfo.subtitle}
+onChange={(value) => updateAboutInfo("subtitle", value)}
+storageKey="about-subtitle"
+multiline
+@@ -166,224 +460,704 @@ export function About() {
+</div>
+
+{/* 경험 카드 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+            {/* 단국대학교 */}
+            <Card className="border-0 shadow-lg">
+              <CardContent className="p-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <School className="h-6 w-6 text-primary" />
                   </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground mb-1">
+                      {isPT ? "Universidade Dankook" : "단국대학교"}
+                    </h3>
+                    <p className="text-sm text-primary mb-1">
+                      {isPT
+                        ? "03.2023 ~ 02.2027 (previsto)"
+                        : "2023.03 ~ 2027.02 (예정)"}
+                    </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+            {aboutInfo.experienceCards?.map((card, index) => {
+              const Icon =
+                AVAILABLE_ICONS[
+                  card.icon as keyof typeof AVAILABLE_ICONS
+                ] || Briefcase
+
+              const ptExp = ABOUT_PT_TEXT.experience[index]
+
+              const titleValue =
+                isPT && ptExp ? ptExp.title : card.title
+              const periodValue =
+                isPT && ptExp ? ptExp.period : card.period
+              const descValue =
+                isPT && ptExp ? ptExp.description : card.description
+
+              return (
+                <Card
+                  key={index}
+                  className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 relative"
+                >
+                  <CardContent className="p-6">
+                    {isEditMode && (
+                      <button
+                        onClick={() => removeExperienceCard(index)}
+                        className={COMMON_STYLES.deleteButton}
+                      >
+                        <X className={COMMON_STYLES.deleteIcon} />
+                      </button>
+                    )}
+                    <div className="flex items-start space-x-4">
+                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Icon className="h-6 w-6 text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-foreground mb-1">
+                          <EditableText
+                            value={titleValue}
+                            onChange={(value) =>
+                              updateExperienceCard(index, "title", value)
+                            }
+                            storageKey={`about-experience-${index}-title`}
+                          />
+                        </h3>
+                        <p className="text-sm text-primary mb-2">
+                          <EditableText
+                            value={periodValue}
+                            onChange={(value) =>
+                              updateExperienceCard(index, "period", value)
+                            }
+                            storageKey={`about-experience-${index}-period`}
+                          />
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          <EditableText
+                            value={descValue}
+                            onChange={(value) =>
+                              updateExperienceCard(
+                                index,
+                                "description",
+                                value
+                              )
+                            }
+                            storageKey={`about-experience-${index}-description`}
+                          />
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )
+            })}
+
+            {/* 경험 카드 편집 버튼 */}
+            {isEditMode && (
+              <Card
+                className="border-2 border-dashed border-muted-foreground/30 shadow-none hover:border-primary transition-all cursor-pointer"
+                onClick={() => setShowCareerModal(true)}
+              >
+                <CardContent className="p-6 flex items-center justify-center">
+                  <div className="text-center">
+                    <Settings className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+<p className="text-sm text-muted-foreground">
+                      {isPT
+                        ? "Graduação em Português e Estudos Brasileiros"
+                        : "포르투갈·브라질학 전공"}
+                      경험 카드 편집
+</p>
+</div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* 포르투갈 교환학생 */}
+            <Card className="border-0 shadow-lg">
+              <CardContent className="p-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <GraduationCap className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground mb-1">
+                      {isPT ? "Intercâmbio em Portugal" : "포르투갈 교환학생"}
+                    </h3>
+                    <p className="text-sm text-primary mb-1">
+                      {isPT ? "02.2024 ~ 07.2024" : "2024.02 ~ 2024.07"}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      University of Coimbra
+                    </p>
                 </CardContent>
               </Card>
-            )
-          })}
-        </div>
-
-        {/* ===== 핵심 역량 ===== */}
-        <h3 className="text-2xl font-bold text-center mb-10">
-          {isPT ? PT.skillsTitle : "핵심 역량"}
-        </h3>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-20">
-          {info.skills.map((s, i) => {
-            const Icon = ICONS[s.icon] || Trophy
-            return (
-              <div key={i} className="text-center space-y-4">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                  <Icon className="w-8 h-8 text-primary" />
-                </div>
-
-                <h4 className="font-semibold">
-                  <EditableText
-                    value={s.title}
-                    onChange={(v) => {
-                      const arr = [...info.skills]
-                      arr[i].title = v
-                      update("skills", arr)
-                    }}
-                    storageKey={`skill-title-${i}`}
-                  />
-                </h4>
-
-                <p className="text-muted-foreground text-sm">
-                  <EditableText
-                    value={s.description}
-                    onChange={(v) => {
-                      const arr = [...info.skills]
-                      arr[i].description = v
-                      update("skills", arr)
-                    }}
-                    storageKey={`skill-desc-${i}`}
-                    multiline
-                  />
-                </p>
-
-                <p className="text-xs text-muted-foreground/80">
-                  {isPT ? SKILL_META.pt[i] : SKILL_META.ko[i]}
-                </p>
-              </div>
-            )
-          })}
-        </div>
-
-        {/* ===== 자기소개 (스토리) ===== */}
-        <div className="bg-card rounded-2xl shadow-lg overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-2">
-            <div className="p-8">
-              <h3 className="text-2xl font-bold mb-6">{info.storyTitle}</h3>
-
-              {info.story.map((p, i) => (
-                <p key={i} className="text-muted-foreground mb-4 leading-relaxed">
-                  <EditableText
-                    value={p}
-                    onChange={(v) => {
-                      const arr = [...info.story]
-                      arr[i] = v
-                      update("story", arr)
-                    }}
-                    storageKey={`story-${i}`}
-                    multiline
-                  />
-                </p>
-              ))}
-            </div>
-
-            <EditableMedia
-              src={info.storyImage}
-              onChange={(src) => update("storyImage", src)}
-              type="image"
-              storageKey="about-storyImage"
-              className="w-full h-full object-cover"
-            />
+            )}
           </div>
-        </div>
 
-        {/* ===== 취미 ===== */}
-        <h3 className="text-2xl font-bold text-center mt-20 mb-6">
-          {isPT ? PT.hobbiesTitle : "취미 & 관심사"}
-        </h3>
+          {/* 핵심 역량 */}
+          {(aboutInfo.skills.length > 0 || isEditMode) && (
+            <div className="mb-16">
+              <h3 className="text-2xl font-bold text-foreground mb-8 text-center">
+                {isPT ? "Competências principais" : "핵심 역량"}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {aboutInfo.skills.map((skill, index) => {
+                  const Icon =
+                    SKILL_ICONS[skill.icon as keyof typeof SKILL_ICONS] ||
+                    Trophy
+                  const ptSkill = ABOUT_PT_TEXT.skills[index]
 
-        <div className="flex flex-wrap justify-center gap-3 mb-10">
-          {info.hobbies.map((h, i) => (
-            <span
-              key={i}
-              className="px-4 py-2 bg-primary/10 text-primary rounded-full text-sm"
-            >
-              <EditableText
-                value={h}
-                onChange={(v) => {
-                  const arr = [...info.hobbies]
-                  arr[i] = v
-                  update("hobbies", arr)
-                }}
-                storageKey={`hobby-${i}`}
-              />
-            </span>
-          ))}
+                  const skillTitle =
+                    isPT && ptSkill ? ptSkill.title : skill.title
+                  const skillDesc =
+                    isPT && ptSkill
+                      ? ptSkill.description
+                      : skill.description
+
+                  return (
+                    <div key={index} className="text-center relative">
+                      {isEditMode && (
+                        <button
+                          onClick={() => removeSkill(index)}
+                          className={COMMON_STYLES.deleteButton}
+                        >
+                          <X className={COMMON_STYLES.deleteIcon} />
+                        </button>
+                      )}
+                      <div className="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
+                        <Icon className="h-8 w-8 text-primary" />
+                      </div>
+                      <h4 className="font-semibold text-foreground mb-2">
+                        <EditableText
+                          value={skillTitle}
+                          onChange={(value) =>
+                            updateSkill(index, "title", value)
+                          }
+                          storageKey={`about-skill-${index}-title`}
+                        />
+                      </h4>
+                      <p className="text-sm text-muted-foreground">
+                        <EditableText
+                          value={skillDesc}
+                          onChange={(value) =>
+                            updateSkill(index, "description", value)
+                          }
+                          storageKey={`about-skill-${index}-description`}
+                          multiline
+                        />
+                      </p>
+                    </div>
+                  )
+                })}
+                {isEditMode && (
+                  <div
+                    className="text-center border-2 border-dashed border-muted-foreground/30 rounded-lg p-6 flex items-center justify-center cursor-pointer hover:border-primary transition-all"
+                    onClick={() => setShowSkillModal(true)}
+                  >
+                    <div>
+                      <Settings className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                      <p className="text-sm text-muted-foreground">
+                        스킬 편집
+                      </p>
+                    </div>
+</div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* 자기소개 상세 */}
+          {(aboutInfo.story.length > 0 || isEditMode) && (
+            <div className="bg-card rounded-2xl shadow-lg overflow-hidden">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 items-stretch">
+                <div className="p-8">
+                  <h3 className="text-2xl font-bold text-foreground mb-4">
+                    <EditableText
+                      value={
+                        isPT
+                          ? ABOUT_PT_TEXT.storyTitle
+                          : aboutInfo.storyTitle
+                      }
+                      onChange={(value) =>
+                        updateAboutInfo("storyTitle", value)
+                      }
+                      storageKey="about-storyTitle"
+                    />
+                  </h3>
+                  {aboutInfo.story.map((paragraph, index) => {
+                    const ptPara = ABOUT_PT_TEXT.story[index]
+                    const value =
+                      isPT && ptPara ? ptPara : paragraph
+                    return (
+                      <div key={index} className="relative mb-4">
+                        {isEditMode && (
+                          <button
+                            onClick={() => removeStory(index)}
+                            className={COMMON_STYLES.deleteButton}
+                          >
+                            <X className={COMMON_STYLES.deleteIcon} />
+                          </button>
+                        )}
+                        <p className="text-muted-foreground leading-relaxed">
+                          <EditableText
+                            value={value}
+                            onChange={(v) => updateStory(index, v)}
+                            storageKey={`about-story-${index}`}
+                            multiline
+                          />
+                        </p>
+                      </div>
+                    )
+                  })}
+                  {isEditMode && (
+                    <button
+                      onClick={addStory}
+                      className="mt-2 px-4 py-2 border border-dashed border-muted-foreground/30 rounded-lg hover:border-primary transition-all"
+                    >
+                      <Plus className="h-4 w-4 inline mr-2" />
+                      문단 추가
+                    </button>
+                  )}
+</div>
+              </CardContent>
+            </Card>
+
+            {/* 투자자산운용사 */}
+            <Card className="border-0 shadow-lg">
+              <CardContent className="p-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <Award className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground mb-1">
+                      {isPT ? "Gestor de Investimentos" : "투자자산운용사"}
+                    </h3>
+                    <p className="text-sm text-primary mb-1">
+                      {isPT ? "Aprovada no 43º exame (2025)" : "2025년 제43회 합격"}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {isPT ? "Certificação de investimentos" : "금융투자자격시험"}
+                    </p>
+                  </div>
+
+                {/* 이미지 영역 */}
+                <div className="relative w-full h-full min-h-[500px] lg:min-h-full">
+                  <EditableMedia
+                    src={aboutInfo.storyImage}
+                    onChange={(src) =>
+                      updateAboutInfo("storyImage", src)
+                    }
+                    type="image"
+                    storageKey="about-storyImage"
+                    className="w-full h-full object-cover"
+                    alt="소개 이미지"
+                    purpose="about-image"
+                  />
+</div>
+              </CardContent>
+            </Card>
+
+            {/* FLEX */}
+            <Card className="border-0 shadow-lg">
+              <CardContent className="p-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <Briefcase className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground mb-1">
+                      FLEX (Foreign Language EXamination)
+                    </h3>
+                    <p className="text-sm text-primary mb-1">
+                      {isPT ? "2023-2" : "2023-2"}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {isPT
+                        ? "Avaliação de proficiência em português"
+                        : "포르투갈어 능력 평가"}
+                    </p>
+              </div>
+            </div>
+          )}
+
+          {/* 취미 & 관심사 */}
+          {(aboutInfo.hobbies.length > 0 || isEditMode) && (
+            <div className="mt-16 text-center">
+              <h3 className="text-2xl font-bold text-foreground mb-8">
+                {isPT
+                  ? ABOUT_PT_TEXT.hobbiesTitle
+                  : "취미 & 관심사"}
+              </h3>
+              <div className="flex flex-wrap justify-center gap-3">
+                {aboutInfo.hobbies.map((hobby, index) => (
+                  <span
+                    key={index}
+                    className="px-4 py-2 bg-primary/10 text-primary rounded-full text-sm relative group flex items-center justify-center"
+                  >
+                    {isEditMode && (
+                      <button
+                        onClick={() => removeHobby(index)}
+                        className={`${COMMON_STYLES.deleteButton} opacity-0 group-hover:opacity-100 transition-opacity`}
+                      >
+                        <X className={COMMON_STYLES.deleteIcon} />
+                      </button>
+                    )}
+                    <EditableText
+                      value={hobby}
+                      onChange={(value) =>
+                        updateHobby(index, value)
+                      }
+                      storageKey={`about-hobby-${index}`}
+                    />
+                  </span>
+                ))}
+                {isEditMode && (
+                  <button
+                    onClick={() => setShowHobbyModal(true)}
+                    className="px-4 py-2 border border-dashed border-muted-foreground/30 rounded-full text-sm hover:border-primary transition-all"
+                  >
+                    <Settings className="h-4 w-4 inline mr-1" />
+                    편집
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </section>
-    </EditableBackground>
-  )
+
+      {/* 경험 카드 편집 모달 */}
+      {showCareerModal && isEditMode && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
+          <div className="bg-background border rounded-lg p-6 max-w-3xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">경험 카드 편집</h3>
+              <button
+                onClick={() => setShowCareerModal(false)}
+                className="p-1 hover:bg-muted rounded-lg"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              {aboutInfo.experienceCards?.map((card, index) => {
+                const Icon =
+                  AVAILABLE_ICONS[
+                    card.icon as keyof typeof AVAILABLE_ICONS
+                  ] || Briefcase
+                return (
+                  <div
+                    key={index}
+                    className="flex items-start gap-3 p-3 border rounded-lg bg-muted/30"
+                  >
+                    {/* 아이콘 선택 */}
+                    <select
+                      value={card.icon}
+                      onChange={(e) =>
+                        updateExperienceCard(
+                          index,
+                          "icon",
+                          e.target.value
+                        )
+                      }
+                      className="w-40 px-2 py-2 border rounded-lg bg-background"
+                    >
+                      <option value="briefcase">💼 직장</option>
+                      <option value="graduation">🎓 학교</option>
+                      <option value="award">🏆 수상</option>
+                      <option value="trophy">🏅 성과</option>
+                      <option value="star">⭐ 우수</option>
+                      <option value="lightbulb">💡 아이디어</option>
+                      <option value="target">🎯 목표</option>
+                      <option value="rocket">🚀 시작</option>
+                      <option value="shield">🛡️ 보안</option>
+                      <option value="building">🏢 회사</option>
+                      <option value="calendar">📅 기간</option>
+                      <option value="book">📚 교육</option>
+                      <option value="heart">❤️ 열정</option>
+                      <option value="coffee">☕ 일상</option>
+                      <option value="user">👤 개인</option>
+                    </select>
+
+                    <div className="flex-1 space-y-2">
+                      <input
+                        type="text"
+                        value={card.title}
+                        onChange={(e) =>
+                          updateExperienceCard(
+                            index,
+                            "title",
+                            e.target.value
+                          )
+                        }
+                        placeholder="예: ABC 회사, 서울대학교, 구글 자격증"
+                        className="w-full px-3 py-2 border rounded-lg bg-background font-semibold"
+                      />
+
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={card.period}
+                          onChange={(e) =>
+                            updateExperienceCard(
+                              index,
+                              "period",
+                              e.target.value
+                            )
+                          }
+                          placeholder="예: 2020 - 현재"
+                          className="flex-1 px-3 py-2 border rounded-lg bg-background"
+                        />
+
+                        <input
+                          type="text"
+                          value={card.description}
+                          onChange={(e) =>
+                            updateExperienceCard(
+                              index,
+                              "description",
+                              e.target.value
+                            )
+                          }
+                          placeholder="예: 마케팅 매니저, 경영학 학사, GAIQ 인증"
+                          className="flex-1 px-3 py-2 border rounded-lg bg-background"
+                        />
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => removeExperienceCard(index)}
+                      className="p-2 text-destructive hover:bg-destructive/10 rounded-lg"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+</div>
+                </div>
+              </CardContent>
+            </Card>
+                )
+              })}
+
+              <button
+                onClick={addExperienceCard}
+                className="w-full py-3 border-2 border-dashed rounded-lg hover:border-primary hover:bg-primary/5 transition-all"
+              >
+                <Plus className="h-4 w-4 inline mr-2" />
+                카드 추가
+              </button>
+            </div>
+
+            <div className="mt-6 pt-4 border-t">
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowCareerModal(false)}
+                  className="flex-1 py-2 bg-muted text-foreground rounded-lg hover:bg-muted/80"
+                >
+                  닫기
+                </button>
+                <button
+                  onClick={async () => {
+                    const success = await saveToFile("about", "Info", aboutInfo)
+                    if (success) {
+                      alert("✅ 소개 설정이 파일에 저장되었습니다!")
+                      setShowCareerModal(false)
+                    } else {
+                      alert("❌ 파일 저장에 실패했습니다.")
+                    }
+                  }}
+                  className="flex-1 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 font-medium"
+                >
+                  📁 파일에 저장
+                </button>
+              </div>
+            </div>
+</div>
+        </div>
+      )}
+
+          {/* 핵심 역량 */}
+          <div className="mb-16">
+            <h3 className="text-2xl font-bold text-foreground mb-8 text-center">
+              {isPT ? "Competências principais" : "핵심 역량"}
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* 1 */}
+              <Card className="border-0 shadow-md">
+                <CardContent className="p-6 text-center">
+                  <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Globe className="h-7 w-7 text-primary" />
+                  </div>
+                  <h4 className="font-semibold text-foreground mb-2">
+                    {isPT
+                      ? "Pesquisa urbana e imobiliária em perspectiva internacional"
+                      : "국제적 관점의 도시·부동산 연구"}
+                  </h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {isPT
+                      ? "Comparo estruturas urbanas e problemas habitacionais em países como Brasil e Europa."
+                      : "브라질·유럽 등 다양한 국가의 도시 구조와 주거 문제를 비교·분석합니다."}
+                  </p>
+                </CardContent>
+              </Card>
+      {/* 스킬 편집 모달 */}
+      {showSkillModal && isEditMode && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[2147483647]">
+          <div className="bg-background border rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">핵심 역량 편집</h3>
+              <button
+                onClick={() => setShowSkillModal(false)}
+                className="p-1 hover:bg-muted rounded-lg"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+              {/* 2 */}
+              <Card className="border-0 shadow-md">
+                <CardContent className="p-6 text-center">
+                  <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Search className="h-7 w-7 text-primary" />
+                  </div>
+                  <h4 className="font-semibold text-foreground mb-2">
+                    {isPT
+                      ? "Compreensão de políticas urbanas e imobiliárias"
+                      : "부동산 및 도시 정책 이해"}
+                  </h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {isPT
+                      ? "Analiso habitação, regeneração urbana, desenvolvimento e infraestrutura como partes de um mesmo sistema."
+                      : "주거, 재생, 개발, 인프라 등 도시를 둘러싼 구조와 정책의 영향을 함께 살펴봅니다."}
+                  </p>
+                </CardContent>
+              </Card>
+            <div className="space-y-3">
+              {aboutInfo.skills.map((skill, index) => {
+                const Icon =
+                  SKILL_ICONS[skill.icon as keyof typeof SKILL_ICONS] ||
+                  Trophy
+                return (
+                  <div
+                    key={index}
+                    className="flex items-start gap-3 p-3 border rounded-lg bg-muted/30"
+                  >
+                    {/* 아이콘 선택 */}
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Icon className="h-6 w-6 text-primary" />
+                      </div>
+                      <select
+                        value={skill.icon}
+                        onChange={(e) =>
+                          updateSkill(index, "icon", e.target.value)
+                        }
+                        className="w-32 px-2 py-1 text-xs border rounded-lg bg-background"
+                      >
+                        <optgroup label="기술 스킬">
+                          <option value="code">💻 코드/개발</option>
+                          <option value="database">🗜️ 데이터베이스</option>
+                          <option value="server">🌐 서버/클라우드</option>
+                          <option value="smartphone">📱 모바일</option>
+                          <option value="monitor">🖥️ 프론트엔드</option>
+                          <option value="cpu">🤖 AI/ML</option>
+                          <option value="gitBranch">🌿 Git/버전관리</option>
+                          <option value="lock">🔒 보안</option>
+                        </optgroup>
+                        <optgroup label="비즈니스">
+                          <option value="barChart">📊 데이터 분석</option>
+                          <option value="lineChart">📈 성과 분석</option>
+                          <option value="pieChart">🥧 통계/시각화</option>
+                          <option value="megaphone">📢 마케팅</option>
+                          <option value="target">🎯 전략/기획</option>
+                          <option value="users">👥 팀워크</option>
+                        </optgroup>
+                        <optgroup label="창의적 스킬">
+                          <option value="palette">🎨 디자인</option>
+                          <option value="camera">📷 사진/영상</option>
+                          <option value="music">🎵 음악/오디오</option>
+                          <option value="edit">✏️ 글쓰기/편집</option>
+                          <option value="video">🎬 영상 제작</option>
+                        </optgroup>
+                        <optgroup label="일반 역량">
+                          <option value="trophy">🏆 리더십</option>
+                          <option value="sparkles">✨ 혁신</option>
+                          <option value="rocket">🚀 실행력</option>
+                          <option value="brain">🧠 분석력</option>
+                          <option value="lightbulb">💡 창의력</option>
+                          <option value="zap">⚡ 속도/효율</option>
+                          <option value="star">⭐ 전문성</option>
+                          <option value="heart">❤️ 열정</option>
+                          <option value="shield">🛡️ 신뢰성</option>
+                          <option value="globe">🌍 글로벌</option>
+                        </optgroup>
+                      </select>
+                    </div>
+
+                    <div className="flex-1 space-y-2">
+                      <input
+                        type="text"
+                        value={skill.title}
+                        onChange={(e) =>
+                          updateSkill(index, "title", e.target.value)
+                        }
+                        placeholder="예: 프론트엔드 개발, 데이터 분석, 프로젝트 관리"
+                        className="w-full px-3 py-2 border rounded-lg bg-background font-semibold"
+                      />
+
+              {/* 3 */}
+              <Card className="border-0 shadow-md">
+                <CardContent className="p-6 text-center">
+                  <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Lightbulb className="h-7 w-7 text-primary" />
+                      <textarea
+                        value={skill.description}
+                        onChange={(e) =>
+                          updateSkill(index, "description", e.target.value)
+                        }
+                        placeholder="예: React와 TypeScript를 활용한 모던 웹 애플리케이션 개발"
+                        className="w-full px-3 py-2 border rounded-lg bg-background resize-none"
+                        rows={2}
+                      />
+                    </div>
+
+                    <button
+                      onClick={() => removeSkill(index)}
+                      className="p-2 text-destructive hover:bg-destructive/10 rounded-lg"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+</div>
+                  <h4 className="font-semibold text-foreground mb-2">
+                    {isPT ? "Especialização regional" : "지역 전문성"}
+                  </h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {isPT
+                      ? "Leio políticas, problemas urbanos e dados de mercado do Brasil a partir da língua portuguesa."
+                      : "브라질 현지 정책, 도시 문제, 시장 자료를 포르투갈어 기반으로 해석·정리합니다."}
+                  </p>
+                </CardContent>
+              </Card>
+                )
+              })}
+
+              <button
+                onClick={addSkill}
+                className="w-full py-3 border-2 border-dashed rounded-lg hover:border-primary hover:bg-primary/5 transition-all"
+              >
+                <Plus className="h-4 w-4 inline mr-2" />
+                스킬 추가
+              </button>
+            </div>
+
+            <div className="mt-6 pt-4 border-t">
+              <p className="text-sm text-muted-foreground mb-4">
+                💡 팁: 아이콘을 선택하고 제목과 설명을 입력하세요. 필요한 만큼 자유롭게 추가할 수 있습니다.
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowSkillModal(false)}
+                  className="flex-1 py-2 bg-muted text-foreground rounded-lg hover:bg-muted/80"
+                >
+                  닫기
+                </button>
+                <button
+                  onClick={async () => {
+                    const success = await saveToFile("about", "Info", aboutInfo)
+                    if (success) {
+                      alert("✅ 소개 설정이 파일에 저장되었습니다!")
+                      setShowSkillModal(false)
+                    } else {
+                      alert("❌ 파일 저장에 실패했습니다.")
+                    }
+                  }}
+                  className="flex-1 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 font-medium"
+                >
+                  📁 파일에 저장
+                </button>
+              </div>
+</div>
+</div>
+        </div>
+      )}
+
+          {/* 나의 이야기 */}
+          <div className="bg-card rounded-2xl shadow-lg overflow-hidden">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 items-stretch">
+              {/* 텍스트 */}
+              <div className="p-8 space-y-4">
+                <h3 className="text-2xl font-bold text-foreground mb-2">
+                  {isPT ? "Minha trajetória" : "나의 이야기"}
+                </h3>
+
+                <p className="text-muted-foreground leading-relaxed">
+                  <EditableText
+                    value={story1}
+                    onChange={(value) => updateAboutInfo("story1", value)}
+                    storageKey="about-story-1"
+                    multiline
+                  />
+                </p>
+                <p className="text-muted-foreground leading-relaxed">
+                  <EditableText
+                    value={story2}
+                    onChange={(value) => updateAboutInfo("story2", value)}
+                    storageKey="about-story-2"
+                    multiline
+                  />
+                </p>
+                <p className="text-muted-foreground leading-relaxed">
+                  <EditableText
+                    value={story3}
+                    onChange={(value) => updateAboutInfo("story3", value)}
+                    storageKey="about-story-3"
+                    multiline
+                  />
+                </p>
+                <p className="text-muted-foreground leading-relaxed">
+                  <EditableText
+                    value={story4}
+                    onChange={(value) => updateAboutInfo("story4", value)}
+                    storageKey="about-story-4"
+                    multiline
+      {/* 취미 편집 모달 */}
+      {showHobbyModal && isEditMode && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[2147483647]">
+          <div className="bg-background border rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">취미 & 관심사 편집</h3>
+              <button
+                onClick={() => setShowHobbyModal(false)}
+                className="p-1 hover:bg-muted rounded-lg"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              {aboutInfo.hobbies.map((hobby, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-3 p-3 border rounded-lg"
+                >
+                  <input
+                    type="text"
+                    value={hobby}
+                    onChange={(e) =>
+                      updateHobby(index, e.target.value)
+                    }
+                    placeholder="예: 📚 독서"
+                    className="flex-1 px-3 py-2 border rounded-lg bg-background"
+/>
+
+                  <button
+                    onClick={() => removeHobby(index)}
+                    className="p-2 text-destructive hover:bg-destructive/10 rounded-lg"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+
+              <button
+                onClick={addHobby}
+                className="w-full py-3 border-2 border-dashed rounded-lg hover:border-primary hover:bg-primary/5 transition-all"
+              >
+                <Plus className="h-4 w-4 inline mr-2" />
+                취미 추가
+              </button>
+            </div>
+
+            <div className="mt-6 pt-4 border-t">
+              <div className="mb-4">
+                <p className="text-sm font-medium mb-2">
+                  🎯 취미 예시:
+</p>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    "📚 독서",
+                    "☕ 카페 투어",
+                    "🎨 전시회 관람",
+                    "✈️ 여행",
+                    "🏃 러닝",
+                    "📸 사진",
+                    "🎮 게임",
+                    "🎬 영화 감상",
+                    "🎵 음악 감상",
+                    "🍳 요리",
+                    "🌱 가드닝",
+                    "🏊 수영",
+                    "🧘 요가",
+                    "🎸 기타 연주",
+                    "✍️ 글쓰기",
+                    "🏕️ 캠핑",
+                    "🎭 연극 관람",
+                    "🎪 공연 관람",
+                    "🚴 자전거",
+                    "⛷️ 스키",
+                  ].map((example) => (
+                    <button
+                      key={example}
+                      className="px-3 py-1 text-sm bg-muted hover:bg-primary/10 rounded-full transition-all"
+                      onClick={() => {
+                        if (!aboutInfo.hobbies.includes(example)) {
+                          updateAboutInfo("hobbies", [
+                            ...aboutInfo.hobbies,
+                            example,
+                          ])
+                        }
+                      }}
+                    >
+                      {example}
+                    </button>
+                  ))}
+                </div>
+</div>
+
+              {/* 이미지 */}
+              <div className="relative w-full h-full min-h-[320px] lg:min-h-full">
+                <EditableMedia
+                  src={aboutInfo.storyImage}
+                  onChange={(src) => updateAboutInfo("storyImage", src)}
+                  type="image"
+                  storageKey="about-storyImage"
+                  className="w-full h-full object-cover"
+                  alt="소개 이미지"
+                  purpose="about-image"
+                />
+              <p className="text-sm text-muted-foreground mb-4">
+                💡 팁: 이모지와 함께 취미를 입력하세요. 예시를 클릭하면 새 취미가 추가됩니다.
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowHobbyModal(false)}
+                  className="flex-1 py-2 bg-muted text-foreground rounded-lg hover:bg-muted/80"
+                >
+                  닫기
+                </button>
+                <button
+                  onClick={async () => {
+                    const success = await saveToFile("about", "Info", aboutInfo)
+                    if (success) {
+                      alert("✅ 소개 설정이 파일에 저장되었습니다!")
+                      setShowHobbyModal(false)
+                    } else {
+                      alert("❌ 파일 저장에 실패했습니다.")
+                    }
+                  }}
+                  className="flex-1 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 font-medium"
+                >
+                  📁 파일에 저장
+                </button>
+</div>
+</div>
+</div>
+</div>
+      </section>
+      )}
+</EditableBackground>
+)
 }
