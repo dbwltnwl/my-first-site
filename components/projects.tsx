@@ -56,7 +56,7 @@ Isso mostra que a favela não é apenas um território de pobreza, mas um mercad
 
     tagsKo: ["#브라질", "#비공식부동산시장", "#위험·가격구조"],
     tagsPt: ["#Brasil", "#MercadoInformal", "#RiscoPreço"],
-    conclusionKo: "이 연구는 파벨라가 공식 시장과 다른 고유한 가격·위험 구조를 가진 독립적 시장임을 보여준다.",
+    conclusionKo: "이 연구는 파벨라가 공식 시장과 다른 고유한 가격·위험 구조를 가진 독립적 시장임을 보여줍니다.",
     conclusionPt: "O estudo evidencia que a favela funciona como um mercado autônomo com lógica própria de preço e risco.",
   },
 
@@ -73,7 +73,7 @@ O estudo indica que Jeongja deixou de ser uma “cidade planejada acabada” e e
 
     tagsKo: ["#계획도시", "#도시재생", "#노후주거"],
     tagsPt: ["#CidadePlanejada", "#RequalificaçãoUrbana", "#HabitaçãoEnvelhecida"],
-    conclusionKo: "이 분석은 정자동이 더 이상 완성형 계획도시가 아니라 재구상이 필요한 단계에 있음을 보여준다.",
+    conclusionKo: "이 분석은 정자동이 더 이상 완성형 계획도시가 아니라 재구상이 필요한 단계에 있음을 보여줍니다.",
     conclusionPt: "A análise mostra que Jeongja deixou de ser um projeto urbano concluído e entrou numa fase que exige reconfiguração.",
   },
 
@@ -90,7 +90,7 @@ A pesquisa mostra que a habitação social na França funciona como uma ferramen
 
     tagsKo: ["#사회주택", "#도시불평등", "#공공정책"],
     tagsPt: ["#HabitaçãoSocial", "#DesigualdadeUrbana", "#PolíticaPública"],
-    conclusionKo: "이 연구는 HLM이 단순 복지가 아니라 도시 불평등을 조정하는 핵심 도시계획 도구임을 확인한다.",
+    conclusionKo: "이 연구는 HLM이 단순 복지가 아니라 도시 불평등을 조정하는 핵심 도시계획 도구임을 확인합니다.",
     conclusionPt: "O estudo confirma que o sistema HLM é um instrumento central de planejamento para reduzir desigualdades urbanas.",
   },
 
@@ -107,7 +107,7 @@ Em comparação com o modelo mais regulatório da Coreia, o caso português reve
 
     tagsKo: ["#외국자본", "#젠트리피케이션", "#주거접근성"],
     tagsPt: ["#CapitalEstrangeiro", "#Gentrificação", "#AcessoHabitacional"],
-    conclusionKo: "이 연구는 골든비자 정책이 도시 불평등을 심화시키며 주거 접근성을 약화시키는 구조적 문제를 드러낸다.",
+    conclusionKo: "이 연구는 골든비자 정책이 도시 불평등을 심화시키며 주거 접근성을 약화시키는 구조적 문제를 드러냅니다.",
     conclusionPt: "O estudo revela que o Golden Visa intensifica desigualdades urbanas e reduz o acesso à habitação para residentes locais.",
   },
 ]
